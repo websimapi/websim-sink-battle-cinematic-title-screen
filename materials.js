@@ -103,9 +103,20 @@ export const loadMaterials = () => {
     color: "#eeeeee",
   });
 
+  const cabinetMat = new THREE.MeshStandardMaterial({
+    color: "#f5f5f5", 
+    roughness: 0.4,
+    metalness: 0.1
+  });
+
+  const floorMat = new THREE.MeshStandardMaterial({
+    color: "#2a2a2a",
+    roughness: 0.7
+  });
+
   return {
     wood, tiles, metal, dirty, hdrEnv, drywall, drywallNormal,
-    counterMat, metalMat, rimMat, chromeMat, rubberMat, frameMat, glassMat, outdoorMat, dirtyMat, wallMat, ceilingMat
+    counterMat, metalMat, rimMat, chromeMat, rubberMat, frameMat, glassMat, outdoorMat, dirtyMat, wallMat, ceilingMat, cabinetMat, floorMat
   };
 };
 

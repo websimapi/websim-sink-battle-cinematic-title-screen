@@ -47,8 +47,7 @@ export const createFaucet = (scene, materials) => {
   // Pull-down Head
   const headGroup = new THREE.Group();
   headGroup.position.set(0, 1.2, 1.2);
-  // Adjusted to point down and slightly back/inwards for a natural hanging look
-  headGroup.rotation.x = Math.PI / 1.8; 
+  headGroup.rotation.x = Math.PI / 2.2; 
 
   const headGeo = new THREE.CylinderGeometry(0.075, 0.085, 0.4, 32);
   const headMesh = new THREE.Mesh(headGeo, chromeMat);

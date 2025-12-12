@@ -27,10 +27,17 @@ export const setupLighting = (scene) => {
   windowFill.target.position.set(0, 0, 2);
   scene.add(windowFill);
   scene.add(windowFill.target);
+
+  // Interior Ceiling Light - Warm top light
+  const ceilingLight = new THREE.PointLight(0xffeedd, 1.5, 12);
+  ceilingLight.position.set(0, 3.2, 3);
+  ceilingLight.castShadow = true;
+  ceilingLight.shadow.bias = -0.0001;
+  scene.add(ceilingLight);
 };
 
 export const createEnvironment = (scene, materials) => {
-  const { frameMat, glassMat, outdoorMat, wood, wallMat, ceilingMat } = materials;
+  const { frameMat, glassMat, outdoorMat, wood, wallMat, ceilingMat, floorMat } = materials;
 
   const windowWidth = 4;
   const windowHeight = 2.5;
@@ -171,14 +178,14 @@ export const createEnvironment = (scene, materials) => {
   ceiling.receiveShadow = true;
   scene.add(ceiling);
 
-  // Shadow Plane (Floor)
-  const shadowPlane = new THREE.Mesh(
+  // Floor
+  const floor = new THREE.Mesh(
     new THREE.PlaneGeometry(20, 20),
-    new THREE.ShadowMaterial({ color: 0x000000, opacity: 0.4 }),
+    floorMat
   );
-  shadowPlane.rotation.x = -Math.PI / 2;
-  shadowPlane.position.y = -0.5; 
-  shadowPlane.receiveShadow = true;
-  scene.add(shadowPlane);
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = -3.5; 
+  floor.receiveShadow = true;
+  scene.add(floor);
 };
 

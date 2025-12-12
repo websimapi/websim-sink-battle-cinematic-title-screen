@@ -1,9 +1,9 @@
 import * as THREE from "three";
 
 export const createCounterAndSink = (scene, materials) => {
-  const { counterMat, metalMat, rimMat } = materials;
+  const { counterMat, metalMat, rimMat, cabinetMat } = materials;
 
-  // Dimensions
+  // --- Countertop ---
   const holeWidth = 3.5;
   const holeDepth = 2.1;
   const counterWidth = 10;
@@ -41,7 +41,7 @@ export const createCounterAndSink = (scene, materials) => {
 
   scene.add(counterGroup);
 
-  // Sink Logic
+  // --- Sink ---
   const sinkGroup = new THREE.Group();
   sinkGroup.position.set(0, 0, 0);
 
@@ -125,5 +125,142 @@ export const createCounterAndSink = (scene, materials) => {
   sinkGroup.add(createBasin((sinkW/4 + dividerW/4)));
 
   scene.add(sinkGroup);
+
+  // --- Cabinets ---
+  const cabH = 3.3;
+  const cabD = 3.8;
+  const cabZ = -2 + cabD/2;   
+  const toeKickH = 0.4;
+  const toeKickD = 0.3;
+  
+  const cabinetGroup = new THREE.Group();
+  scene.add(cabinetGroup);
+  
+  // Shaker Door Helper
+  const createDoor = (w, h, handleSide = "left") => {
+    const door = new THREE.Group();
+    const thick = 0.08;
+    const border = 0.12;
+    
+    const panel = new THREE.Mesh(new THREE.BoxGeometry(w, h, thick), cabinetMat);
+    door.add(panel);
+    
+    // Frame
+    const railGeo = new THREE.BoxGeometry(w, border, thick + 0.03);
+    const topRail = new THREE.Mesh(railGeo, cabinetMat);
+    topRail.position.y = h/2 - border/2;
+    topRail.position.z = 0.015;
+    topRail.castShadow = true;
+    door.add(topRail);
+    
+    const botRail = new THREE.Mesh(railGeo, cabinetMat);
+    botRail.position.y = -h/2 + border/2;
+    botRail.position.z = 0.015;
+    botRail.castShadow = true;
+    door.add(botRail);
+    
+    const stileGeo = new THREE.BoxGeometry(border, h - 2*border, thick + 0.03);
+    const leftStile = new THREE.Mesh(stileGeo, cabinetMat);
+    leftStile.position.x = -w/2 + border/2;
+    leftStile.position.z = 0.015;
+    leftStile.castShadow = true;
+    door.add(leftStile);
+    
+    const rightStile = new THREE.Mesh(stileGeo, cabinetMat);
+    rightStile.position.x = w/2 - border/2;
+    rightStile.position.z = 0.015;
+    rightStile.castShadow = true;
+    door.add(rightStile);
+    
+    // Handle
+    const handle = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.012, 0.012, 0.2, 8),
+        new THREE.MeshStandardMaterial({color: "#333", metalness: 0.8, roughness: 0.2})
+    );
+    const hX = handleSide === "left" ? w/2 - border/2 - 0.02 : -w/2 + border/2 + 0.02;
+    handle.position.set(hX, h/4, thick + 0.05);
+    handle.castShadow = true;
+    door.add(handle);
+    
+    return door;
+  };
+  
+  // Drawer Helper
+  const createDrawer = (w, h) => {
+    const drawer = new THREE.Group();
+    const thick = 0.08;
+    const slab = new THREE.Mesh(new THREE.BoxGeometry(w, h, thick+0.02), cabinetMat);
+    slab.castShadow = true;
+    drawer.add(slab);
+    
+    const handle = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.012, 0.012, 0.15, 8),
+        new THREE.MeshStandardMaterial({color: "#333", metalness: 0.8, roughness: 0.2})
+    );
+    handle.rotation.z = Math.PI/2;
+    handle.position.z = thick + 0.04;
+    drawer.add(handle);
+    return drawer;
+  };
+
+  // Carcass
+  const carcassH = cabH - toeKickH;
+  const carcass = new THREE.Mesh(
+    new THREE.BoxGeometry(counterWidth, carcassH, cabD),
+    cabinetMat
+  );
+  carcass.position.set(0, -3.5 + toeKickH + carcassH/2, cabZ);
+  carcass.receiveShadow = true;
+  cabinetGroup.add(carcass);
+  
+  // Toe Kick
+  const kick = new THREE.Mesh(
+    new THREE.BoxGeometry(counterWidth, toeKickH, cabD - toeKickD),
+    new THREE.MeshStandardMaterial({color: "#111", roughness: 1})
+  );
+  kick.position.set(0, -3.5 + toeKickH/2, cabZ - toeKickD/2);
+  cabinetGroup.add(kick);
+  
+  const frontZ = cabZ + cabD/2 + 0.04; 
+  const topDrawerH = 0.6;
+  const doorH = carcassH - topDrawerH - 0.1; 
+  const bottomY = -3.5 + toeKickH + 0.1;
+  
+  // Sink Base
+  const cX = 0;
+  const cW = 3.6;
+  const falsePanel = new THREE.Mesh(new THREE.BoxGeometry(cW - 0.1, topDrawerH, 0.06), cabinetMat);
+  falsePanel.position.set(cX, -0.2 - topDrawerH/2 - 0.05, frontZ);
+  falsePanel.castShadow = true;
+  cabinetGroup.add(falsePanel);
+  
+  const doorW = (cW - 0.2) / 2;
+  const leftDoor = createDoor(doorW, doorH, "right");
+  leftDoor.position.set(cX - doorW/2 - 0.02, bottomY + doorH/2, frontZ);
+  cabinetGroup.add(leftDoor);
+  
+  const rightDoor = createDoor(doorW, doorH, "left");
+  rightDoor.position.set(cX + doorW/2 + 0.02, bottomY + doorH/2, frontZ);
+  cabinetGroup.add(rightDoor);
+  
+  // Left Bank (Drawers)
+  const lW = (counterWidth - cW)/2; 
+  const lX = -counterWidth/2 + lW/2;
+  const dH = (carcassH - 0.2) / 3;
+  for(let i=0; i<3; i++) {
+    const d = createDrawer(lW - 0.1, dH - 0.05);
+    d.position.set(lX, bottomY + dH/2 + i*dH, frontZ);
+    cabinetGroup.add(d);
+  }
+  
+  // Right Bank
+  const rX = counterWidth/2 - lW/2;
+  const rTopD = createDrawer(lW - 0.1, topDrawerH);
+  rTopD.position.set(rX, -0.2 - topDrawerH/2 - 0.05, frontZ);
+  cabinetGroup.add(rTopD);
+  
+  const rDoor = createDoor(lW - 0.1, doorH, "left");
+  rDoor.position.set(rX, bottomY + doorH/2, frontZ);
+  cabinetGroup.add(rDoor);
 };
 
