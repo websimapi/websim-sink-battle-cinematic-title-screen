@@ -261,11 +261,13 @@ const KitchenSceneCanvas = () => {
       antialias: true,
       preserveDrawingBuffer: true
     });
-    renderer.setPixelRatio(window.devicePixelRatio || 1);
+    renderer.setPixelRatio(1);
     renderer.setSize(width, height, false);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
     const { scene, camera } = createKitchenScene(width, height);
     rendererRef.current = renderer;
     sceneRef.current = scene;
@@ -311,7 +313,7 @@ const KitchenSceneCanvas = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 381,
+      lineNumber: 385,
       columnNumber: 5
     }
   );
@@ -335,6 +337,8 @@ const KitchenSceneStandalone = () => {
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
     const { scene, camera } = createKitchenScene(clientWidth, clientHeight);
     rendererRef.current = renderer;
     sceneRef.current = scene;
@@ -400,7 +404,7 @@ const KitchenSceneStandalone = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 484,
+      lineNumber: 491,
       columnNumber: 5
     }
   );

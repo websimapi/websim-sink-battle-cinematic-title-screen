@@ -66,9 +66,10 @@ const App = () => {
           loop: true,
           style: {
             width: "100%",
-            height: "100%",
-            maxWidth: "100%",
-            maxHeight: "100%"
+            maxWidth: "540px",
+            // Scaled down for desktop view, but renders at full res
+            aspectRatio: "9/16",
+            boxShadow: "0 0 20px rgba(0,0,0,0.5)"
           }
         },
         void 0,
