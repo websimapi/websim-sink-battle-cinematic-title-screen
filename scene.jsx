@@ -2,17 +2,9 @@ import { jsxDEV } from "react/jsx-dev-runtime";
 import React, { useEffect, useRef, useState } from "react";
 import { useCurrentFrame, useVideoConfig, interpolate } from "remotion";
 import * as THREE from "three";
-import { RoomEnvironment } from "https://esm.sh/three@0.165.0/examples/jsm/environments/RoomEnvironment.js?deps=three@0.165.0";
-const createKitchenScene = (width, height, renderer) => {
+const createKitchenScene = (width, height) => {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color("#050505");
-  if (renderer) {
-    const pmremGenerator = new THREE.PMREMGenerator(renderer);
-    pmremGenerator.compileEquirectangularShader();
-    const roomEnv = new RoomEnvironment();
-    scene.environment = pmremGenerator.fromScene(roomEnv).texture;
-    roomEnv.dispose();
-  }
   const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
   camera.position.set(1, 0.5, 1);
   const loader = new THREE.TextureLoader();
@@ -21,7 +13,10 @@ const createKitchenScene = (width, height, renderer) => {
   const tiles = loader.load("kitchen_tiles.png");
   const metal = loader.load("metal_scratch.png");
   const dirty = loader.load("dirty_plate_texture.png");
-  const ambient = new THREE.AmbientLight(4210752, 1.5);
+  const hdrEnv = loader.load("kitchen_hdr.png");
+  hdrEnv.mapping = THREE.EquirectangularReflectionMapping;
+  scene.environment = hdrEnv;
+  const ambient = new THREE.AmbientLight(4210752, 0.5);
   scene.add(ambient);
   const sunLight = new THREE.DirectionalLight(16775920, 4);
   sunLight.position.set(2, 5, -8);
@@ -234,7 +229,7 @@ const createKitchenScene = (width, height, renderer) => {
   scene.add(glass);
   const outdoorGeo = new THREE.PlaneGeometry(12, 8);
   const outdoorMat = new THREE.MeshBasicMaterial({
-    color: 1118481,
+    map: hdrEnv,
     side: THREE.BackSide
     // Visible from inside
   });
@@ -351,7 +346,7 @@ const KitchenSceneCanvas = () => {
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     canvas.style.width = "100%";
     canvas.style.height = "100%";
-    const { scene, camera } = createKitchenScene(width, height, renderer);
+    const { scene, camera } = createKitchenScene(width, height);
     rendererRef.current = renderer;
     sceneRef.current = scene;
     cameraRef.current = camera;
@@ -396,7 +391,7 @@ const KitchenSceneCanvas = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 505,
+      lineNumber: 500,
       columnNumber: 5
     }
   );
@@ -422,7 +417,7 @@ const KitchenSceneStandalone = () => {
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     canvas.style.width = "100%";
     canvas.style.height = "100%";
-    const { scene, camera } = createKitchenScene(clientWidth, clientHeight, renderer);
+    const { scene, camera } = createKitchenScene(clientWidth, clientHeight);
     rendererRef.current = renderer;
     sceneRef.current = scene;
     cameraRef.current = camera;
@@ -487,7 +482,7 @@ const KitchenSceneStandalone = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 612,
+      lineNumber: 607,
       columnNumber: 5
     }
   );
