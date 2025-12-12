@@ -92,23 +92,32 @@ export const createCounterAndSink = (scene, materials) => {
     
     const w1 = new THREE.Mesh(sideWall, metalMat);
     w1.position.set(-bW/2, -sinkDeep/2, 0);
+    w1.castShadow = true;
+    w1.receiveShadow = true;
     basin.add(w1);
 
     const w2 = new THREE.Mesh(sideWall, metalMat);
     w2.position.set(bW/2, -sinkDeep/2, 0);
+    w2.castShadow = true;
+    w2.receiveShadow = true;
     basin.add(w2);
 
     const w3 = new THREE.Mesh(fbWall, metalMat);
     w3.position.set(0, -sinkDeep/2, -sinkD/2);
+    w3.castShadow = true;
+    w3.receiveShadow = true;
     basin.add(w3);
 
     const w4 = new THREE.Mesh(fbWall, metalMat);
     w4.position.set(0, -sinkDeep/2, sinkD/2);
+    w4.castShadow = true;
+    w4.receiveShadow = true;
     basin.add(w4);
     
     const bot = new THREE.Mesh(new THREE.BoxGeometry(bW, wallThick, sinkD), metalMat);
     bot.position.set(0, -sinkDeep, 0);
     bot.receiveShadow = true;
+    bot.castShadow = true;
     basin.add(bot);
     
     const drain = new THREE.Mesh(
@@ -116,6 +125,7 @@ export const createCounterAndSink = (scene, materials) => {
       new THREE.MeshStandardMaterial({ color: "#222222", metalness: 0.5, roughness: 0.8 })
     );
     drain.position.set(0, -sinkDeep + 0.04, -0.4);
+    drain.receiveShadow = true;
     basin.add(drain);
     
     return basin;
