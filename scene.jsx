@@ -145,30 +145,78 @@ const createKitchenScene = (width, height) => {
   sinkGroup.add(createBasin(sinkW / 4 + dividerW / 4));
   scene.add(sinkGroup);
   const faucetGroup = new THREE.Group();
-  faucetGroup.position.set(0, 0, -1.35);
-  const faucetBody = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.1, 0.15, 1, 16),
-    new THREE.MeshStandardMaterial({
-      color: "#dddddd",
-      metalness: 1,
-      roughness: 0.1
-    })
-  );
-  faucetBody.position.set(0, 0.5, 0);
-  faucetBody.castShadow = true;
-  faucetGroup.add(faucetBody);
-  const faucetNeck = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.08, 0.1, 0.8, 16),
-    new THREE.MeshStandardMaterial({
-      color: "#dddddd",
-      metalness: 1,
-      roughness: 0.1
-    })
-  );
-  faucetNeck.position.set(0, 1, 0.3);
-  faucetNeck.rotation.set(0.5, 0, 0);
-  faucetNeck.castShadow = true;
-  faucetGroup.add(faucetNeck);
+  faucetGroup.position.set(0, 0, -1.4);
+  const chromeMat = new THREE.MeshStandardMaterial({
+    color: "#ffffff",
+    metalness: 1,
+    roughness: 0.15,
+    envMapIntensity: 1.2
+  });
+  const rubberMat = new THREE.MeshStandardMaterial({
+    color: "#222222",
+    roughness: 0.9,
+    metalness: 0
+  });
+  const baseGeo = new THREE.CylinderGeometry(0.14, 0.16, 0.25, 32);
+  const baseMesh = new THREE.Mesh(baseGeo, chromeMat);
+  baseMesh.position.y = 0.125;
+  baseMesh.castShadow = true;
+  baseMesh.receiveShadow = true;
+  faucetGroup.add(baseMesh);
+  const handleGroup = new THREE.Group();
+  handleGroup.position.set(0.14, 0.15, 0);
+  handleGroup.rotation.z = -Math.PI / 4;
+  const handlePin = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.15, 16), chromeMat);
+  handlePin.rotation.z = Math.PI / 2;
+  handlePin.position.x = 0.075;
+  handleGroup.add(handlePin);
+  const handleStick = new THREE.Mesh(new THREE.CapsuleGeometry(0.035, 0.25, 4, 16), chromeMat);
+  handleStick.rotation.z = Math.PI / 2;
+  handleStick.position.x = 0.25;
+  handleGroup.add(handleStick);
+  faucetGroup.add(handleGroup);
+  const curve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(0, 0.25, 0),
+    // Start at top of base
+    new THREE.Vector3(0, 1.3, 0),
+    // Vertical rise
+    new THREE.Vector3(0, 2.1, 0.4),
+    // High arch peak start
+    new THREE.Vector3(0, 2, 1.1),
+    // High arch peak forward
+    new THREE.Vector3(0, 1.3, 1.45)
+    // Curve down towards sink
+  ]);
+  const tubeGeo = new THREE.TubeGeometry(curve, 64, 0.06, 32, false);
+  const tubeMesh = new THREE.Mesh(tubeGeo, chromeMat);
+  tubeMesh.castShadow = true;
+  faucetGroup.add(tubeMesh);
+  const headGroup = new THREE.Group();
+  headGroup.position.set(0, 1.3, 1.45);
+  headGroup.rotation.x = -Math.PI / 2.5;
+  const headGeo = new THREE.CylinderGeometry(0.075, 0.085, 0.4, 32);
+  const headMesh = new THREE.Mesh(headGeo, chromeMat);
+  headMesh.rotation.x = Math.PI / 2;
+  headMesh.position.z = 0.2;
+  headMesh.castShadow = true;
+  headGroup.add(headMesh);
+  const tipGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.02, 32);
+  const tipMesh = new THREE.Mesh(tipGeo, new THREE.MeshStandardMaterial({ color: "#111", roughness: 0.5 }));
+  tipMesh.rotation.x = Math.PI / 2;
+  tipMesh.position.z = 0.41;
+  headGroup.add(tipMesh);
+  const btnGeo = new THREE.CapsuleGeometry(0.025, 0.08, 4, 8);
+  const btn1 = new THREE.Mesh(btnGeo, rubberMat);
+  btn1.position.set(0, 0.08, 0.25);
+  btn1.rotation.z = Math.PI / 2;
+  btn1.scale.set(1, 1, 0.5);
+  headGroup.add(btn1);
+  const btn2 = new THREE.Mesh(new THREE.CapsuleGeometry(0.025, 0.05, 4, 8), rubberMat);
+  btn2.position.set(0, 0.08, 0.12);
+  btn2.rotation.z = Math.PI / 2;
+  btn2.scale.set(1, 1, 0.5);
+  headGroup.add(btn2);
+  faucetGroup.add(headGroup);
   scene.add(faucetGroup);
   const frameMat = new THREE.MeshStandardMaterial({
     color: "#e0e0e0",
@@ -391,7 +439,7 @@ const KitchenSceneCanvas = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 500,
+      lineNumber: 570,
       columnNumber: 5
     }
   );
@@ -482,7 +530,7 @@ const KitchenSceneStandalone = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 607,
+      lineNumber: 677,
       columnNumber: 5
     }
   );
