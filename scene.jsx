@@ -27,7 +27,7 @@ const createKitchenScene = (width, height) => {
   const tiles = loader.load("kitchen_tiles.png");
   const metal = loader.load("metal_scratch.png");
   const dirty = loader.load("dirty_plate_texture.png");
-  const counterGeo = new THREE.BoxGeometry(6, 0.2, 4);
+  const counterGeo = new THREE.BoxGeometry(10, 0.2, 4);
   const counterMat = new THREE.MeshStandardMaterial({
     map: wood,
     roughness: 0.4
@@ -42,38 +42,53 @@ const createKitchenScene = (width, height) => {
     roughness: 0.3
   });
   const basinGroup = new THREE.Group();
-  basinGroup.position.set(0, -0.6, 0);
+  basinGroup.position.set(0, -0.25, 0);
   const bottom = new THREE.Mesh(
-    new THREE.BoxGeometry(2.8, 0.1, 1.8),
+    new THREE.BoxGeometry(2.6, 0.1, 1.6),
     metalMat
   );
+  bottom.position.set(0, -0.2, 0);
   bottom.castShadow = true;
   bottom.receiveShadow = true;
   basinGroup.add(bottom);
+  const wallHeight = 0.4;
+  const wallThickness = 0.08;
   const back = new THREE.Mesh(
-    new THREE.BoxGeometry(2.8, 1.1, 0.1),
+    new THREE.BoxGeometry(2.6, wallHeight, wallThickness),
     metalMat
   );
-  back.position.set(0, 0.5, -0.9);
+  back.position.set(0, 0, -0.8);
   basinGroup.add(back);
   const front = new THREE.Mesh(
-    new THREE.BoxGeometry(2.8, 1.1, 0.1),
+    new THREE.BoxGeometry(2.6, wallHeight, wallThickness),
     metalMat
   );
-  front.position.set(0, 0.5, 0.9);
+  front.position.set(0, 0, 0.8);
   basinGroup.add(front);
   const left = new THREE.Mesh(
-    new THREE.BoxGeometry(0.1, 1.1, 1.9),
+    new THREE.BoxGeometry(wallThickness, wallHeight, 1.6),
     metalMat
   );
-  left.position.set(-1.4, 0.5, 0);
+  left.position.set(-1.3, 0, 0);
   basinGroup.add(left);
   const right = new THREE.Mesh(
-    new THREE.BoxGeometry(0.1, 1.1, 1.9),
+    new THREE.BoxGeometry(wallThickness, wallHeight, 1.6),
     metalMat
   );
-  right.position.set(1.4, 0.5, 0);
+  right.position.set(1.3, 0, 0);
   basinGroup.add(right);
+  const rim = new THREE.Mesh(
+    new THREE.BoxGeometry(3.2, 0.05, 2.2),
+    new THREE.MeshStandardMaterial({
+      map: metal,
+      metalness: 0.9,
+      roughness: 0.2
+    })
+  );
+  rim.position.set(0, 0.02, 0);
+  rim.castShadow = true;
+  rim.receiveShadow = true;
+  scene.add(rim);
   scene.add(basinGroup);
   const faucetGroup = new THREE.Group();
   faucetGroup.position.set(0, 0, -1.1);
@@ -101,16 +116,63 @@ const createKitchenScene = (width, height) => {
   faucetNeck.castShadow = true;
   faucetGroup.add(faucetNeck);
   scene.add(faucetGroup);
-  const backsplash = new THREE.Mesh(
-    new THREE.PlaneGeometry(10, 5),
+  const frameMat = new THREE.MeshStandardMaterial({
+    color: "#e0e0e0",
+    metalness: 0.1,
+    roughness: 0.5
+  });
+  const windowWidth = 4;
+  const windowHeight = 2.5;
+  const frameThickness = 0.1;
+  const frameDepth = 0.05;
+  const windowZ = -2;
+  const topFrame = new THREE.Mesh(
+    new THREE.BoxGeometry(windowWidth + frameThickness * 2, frameThickness, frameDepth),
+    frameMat
+  );
+  topFrame.position.set(0, 2.5, windowZ);
+  scene.add(topFrame);
+  const bottomFrame = new THREE.Mesh(
+    new THREE.BoxGeometry(windowWidth + frameThickness * 2, frameThickness, frameDepth),
+    frameMat
+  );
+  bottomFrame.position.set(0, 0.5, windowZ);
+  scene.add(bottomFrame);
+  const leftFrame = new THREE.Mesh(
+    new THREE.BoxGeometry(frameThickness, windowHeight, frameDepth),
+    frameMat
+  );
+  leftFrame.position.set(-windowWidth / 2 - frameThickness / 2, 1.5, windowZ);
+  scene.add(leftFrame);
+  const rightFrame = new THREE.Mesh(
+    new THREE.BoxGeometry(frameThickness, windowHeight, frameDepth),
+    frameMat
+  );
+  rightFrame.position.set(windowWidth / 2 + frameThickness / 2, 1.5, windowZ);
+  scene.add(rightFrame);
+  const glass = new THREE.Mesh(
+    new THREE.PlaneGeometry(windowWidth, windowHeight),
     new THREE.MeshStandardMaterial({
-      map: tiles,
-      roughness: 0.1,
-      metalness: 0
+      color: "#020202",
+      roughness: 0.9,
+      metalness: 0,
+      transparent: true,
+      opacity: 0.98
     })
   );
-  backsplash.position.set(0, 1.5, -2);
-  scene.add(backsplash);
+  glass.position.set(0, 1.5, windowZ - 0.01);
+  scene.add(glass);
+  const sill = new THREE.Mesh(
+    new THREE.BoxGeometry(10, 0.08, 0.6),
+    new THREE.MeshStandardMaterial({
+      map: wood,
+      roughness: 0.4
+    })
+  );
+  sill.position.set(0, 0.1, -1.7);
+  sill.castShadow = true;
+  sill.receiveShadow = true;
+  scene.add(sill);
   const dirtyMat = new THREE.MeshStandardMaterial({
     map: dirty,
     roughness: 0.2,
@@ -249,7 +311,7 @@ const KitchenSceneCanvas = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 302,
+      lineNumber: 381,
       columnNumber: 5
     }
   );
@@ -338,7 +400,7 @@ const KitchenSceneStandalone = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 405,
+      lineNumber: 484,
       columnNumber: 5
     }
   );
