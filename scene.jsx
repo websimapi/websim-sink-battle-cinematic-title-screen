@@ -4,29 +4,40 @@ import { useCurrentFrame, useVideoConfig, interpolate } from "remotion";
 import * as THREE from "three";
 const createKitchenScene = (width, height) => {
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color("#111111");
+  scene.background = new THREE.Color("#050505");
   const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
   camera.position.set(1, 0.5, 1);
-  const ambient = new THREE.AmbientLight(13421823, 0.3);
-  scene.add(ambient);
-  const keyLight = new THREE.PointLight(16755336, 1.5);
-  keyLight.position.set(5, 5, 2);
-  keyLight.castShadow = true;
-  scene.add(keyLight);
-  const fillLight = new THREE.PointLight(11184895, 0.8);
-  fillLight.position.set(-4, 3, 4);
-  scene.add(fillLight);
-  const spot = new THREE.SpotLight(16777215, 2, 20, Math.PI / 3, 0.5, 1);
-  spot.position.set(0, 8, 0);
-  spot.castShadow = true;
-  spot.shadow.mapSize.set(2048, 2048);
-  scene.add(spot);
   const loader = new THREE.TextureLoader();
   const wood = loader.load("wood_counter.png");
   wood.wrapS = wood.wrapT = THREE.RepeatWrapping;
   const tiles = loader.load("kitchen_tiles.png");
   const metal = loader.load("metal_scratch.png");
   const dirty = loader.load("dirty_plate_texture.png");
+  const hdrEnv = loader.load("kitchen_hdr.png");
+  hdrEnv.mapping = THREE.EquirectangularReflectionMapping;
+  scene.environment = hdrEnv;
+  const ambient = new THREE.AmbientLight(4210752, 0.5);
+  scene.add(ambient);
+  const sunLight = new THREE.DirectionalLight(16775920, 4);
+  sunLight.position.set(2, 5, -8);
+  sunLight.target.position.set(0, 0, 0);
+  sunLight.castShadow = true;
+  sunLight.shadow.mapSize.width = 2048;
+  sunLight.shadow.mapSize.height = 2048;
+  sunLight.shadow.bias = -5e-4;
+  sunLight.shadow.camera.near = 0.5;
+  sunLight.shadow.camera.far = 20;
+  sunLight.shadow.camera.left = -5;
+  sunLight.shadow.camera.right = 5;
+  sunLight.shadow.camera.top = 5;
+  sunLight.shadow.camera.bottom = -5;
+  scene.add(sunLight);
+  scene.add(sunLight.target);
+  const windowFill = new THREE.SpotLight(14544639, 2, 15, Math.PI / 3, 0.5, 1);
+  windowFill.position.set(0, 3, -1.8);
+  windowFill.target.position.set(0, 0, 2);
+  scene.add(windowFill);
+  scene.add(windowFill.target);
   const counterMat = new THREE.MeshStandardMaterial({
     map: wood,
     roughness: 0.4
@@ -167,44 +178,65 @@ const createKitchenScene = (width, height) => {
   const windowWidth = 4;
   const windowHeight = 2.5;
   const frameThickness = 0.1;
-  const frameDepth = 0.05;
+  const frameDepth = 0.15;
   const windowZ = -2;
   const topFrame = new THREE.Mesh(
     new THREE.BoxGeometry(windowWidth + frameThickness * 2, frameThickness, frameDepth),
     frameMat
   );
   topFrame.position.set(0, 2.5, windowZ);
+  topFrame.castShadow = true;
   scene.add(topFrame);
   const bottomFrame = new THREE.Mesh(
     new THREE.BoxGeometry(windowWidth + frameThickness * 2, frameThickness, frameDepth),
     frameMat
   );
   bottomFrame.position.set(0, 0.5, windowZ);
+  bottomFrame.castShadow = true;
+  bottomFrame.receiveShadow = true;
   scene.add(bottomFrame);
   const leftFrame = new THREE.Mesh(
     new THREE.BoxGeometry(frameThickness, windowHeight, frameDepth),
     frameMat
   );
   leftFrame.position.set(-windowWidth / 2 - frameThickness / 2, 1.5, windowZ);
+  leftFrame.castShadow = true;
   scene.add(leftFrame);
   const rightFrame = new THREE.Mesh(
     new THREE.BoxGeometry(frameThickness, windowHeight, frameDepth),
     frameMat
   );
   rightFrame.position.set(windowWidth / 2 + frameThickness / 2, 1.5, windowZ);
+  rightFrame.castShadow = true;
   scene.add(rightFrame);
-  const glass = new THREE.Mesh(
-    new THREE.PlaneGeometry(windowWidth, windowHeight),
-    new THREE.MeshStandardMaterial({
-      color: "#020202",
-      roughness: 0.9,
-      metalness: 0,
-      transparent: true,
-      opacity: 0.98
-    })
-  );
-  glass.position.set(0, 1.5, windowZ - 0.01);
+  const glassGeo = new THREE.BoxGeometry(windowWidth, windowHeight, 0.02);
+  const glassMat = new THREE.MeshPhysicalMaterial({
+    color: 16777215,
+    metalness: 0,
+    roughness: 0.05,
+    transmission: 0.95,
+    // Glass-like transparency
+    thickness: 0.1,
+    // Refraction volume
+    ior: 1.5,
+    // Index of Refraction for glass
+    envMapIntensity: 1,
+    transparent: true,
+    opacity: 1
+  });
+  const glass = new THREE.Mesh(glassGeo, glassMat);
+  glass.position.set(0, 1.5, windowZ);
   scene.add(glass);
+  const outdoorGeo = new THREE.PlaneGeometry(12, 8);
+  const outdoorMat = new THREE.MeshBasicMaterial({
+    map: hdrEnv,
+    side: THREE.BackSide
+    // Visible from inside
+  });
+  const outdoorView = new THREE.Mesh(outdoorGeo, outdoorMat);
+  outdoorView.position.set(0, 2, -5);
+  outdoorView.rotation.y = Math.PI;
+  scene.add(outdoorView);
   const sill = new THREE.Mesh(
     new THREE.BoxGeometry(10, 0.08, 0.6),
     new THREE.MeshStandardMaterial({
@@ -334,9 +366,9 @@ const KitchenSceneCanvas = () => {
     const scene = sceneRef.current;
     const camera = cameraRef.current;
     const t = durationInFrames > 0 ? frame / durationInFrames : 0;
-    const x = interpolate(t, [0, 0.4, 1], [1.5, 0.6, -1.4]);
-    const y = interpolate(t, [0, 0.2, 1], [0.9, 3, 2.6]);
-    const z = interpolate(t, [0, 0.3, 1], [2.2, 5.2, 6]);
+    const x = interpolate(t, [0, 0.4, 1], [3, 1.5, -1.8]);
+    const y = interpolate(t, [0, 0.2, 1], [1.5, 3.5, 3]);
+    const z = interpolate(t, [0, 0.3, 1], [4, 6, 7.5]);
     const lookX = 0;
     const lookY = interpolate(t, [0, 1], [-0.35, -0.05]);
     const lookZ = 0;
@@ -359,7 +391,7 @@ const KitchenSceneCanvas = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 462,
+      lineNumber: 500,
       columnNumber: 5
     }
   );
@@ -400,9 +432,9 @@ const KitchenSceneStandalone = () => {
       const scene2 = sceneRef.current;
       const camera2 = cameraRef.current;
       const t = durationFrames > 0 ? frame % durationFrames / durationFrames : 0;
-      const x = interpolate(t, [0, 0.4, 1], [1.5, 0.6, -1.4]);
-      const y = interpolate(t, [0, 0.2, 1], [0.9, 3, 2.6]);
-      const z = interpolate(t, [0, 0.3, 1], [2.2, 5.2, 6]);
+      const x = interpolate(t, [0, 0.4, 1], [3, 1.5, -1.8]);
+      const y = interpolate(t, [0, 0.2, 1], [1.5, 3.5, 3]);
+      const z = interpolate(t, [0, 0.3, 1], [4, 6, 7.5]);
       const lookX = 0;
       const lookY = interpolate(t, [0, 1], [-0.35, -0.05]);
       const lookZ = 0;
@@ -450,7 +482,7 @@ const KitchenSceneStandalone = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 568,
+      lineNumber: 607,
       columnNumber: 5
     }
   );
