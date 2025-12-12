@@ -13,9 +13,6 @@ const createKitchenScene = (width, height) => {
   const tiles = loader.load("kitchen_tiles.png");
   const metal = loader.load("metal_scratch.png");
   const dirty = loader.load("dirty_plate_texture.png");
-  const hdrEnv = loader.load("kitchen_hdr.png");
-  hdrEnv.mapping = THREE.EquirectangularReflectionMapping;
-  scene.environment = hdrEnv;
   const ambient = new THREE.AmbientLight(4210752, 0.5);
   scene.add(ambient);
   const sunLight = new THREE.DirectionalLight(16775920, 4);
@@ -229,7 +226,7 @@ const createKitchenScene = (width, height) => {
   scene.add(glass);
   const outdoorGeo = new THREE.PlaneGeometry(12, 8);
   const outdoorMat = new THREE.MeshBasicMaterial({
-    map: hdrEnv,
+    color: 1118481,
     side: THREE.BackSide
     // Visible from inside
   });
@@ -391,7 +388,7 @@ const KitchenSceneCanvas = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 500,
+      lineNumber: 495,
       columnNumber: 5
     }
   );
@@ -482,7 +479,7 @@ const KitchenSceneStandalone = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 607,
+      lineNumber: 602,
       columnNumber: 5
     }
   );
