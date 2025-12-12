@@ -2,6 +2,7 @@ import { jsxDEV } from "react/jsx-dev-runtime";
 import React, { useEffect, useRef, useState } from "react";
 import { useCurrentFrame, useVideoConfig, interpolate } from "remotion";
 import * as THREE from "three";
+import { OrbitControls } from "https://esm.sh/three@0.165.0/examples/jsm/controls/OrbitControls?external=three";
 import { loadMaterials } from "./materials.js";
 import { setupLighting, createEnvironment } from "./environment.js";
 import { createCounterAndSink } from "./sink.js";
@@ -90,7 +91,7 @@ const KitchenSceneCanvas = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 117,
+      lineNumber: 118,
       columnNumber: 5
     }
   );
@@ -117,31 +118,18 @@ const KitchenSceneStandalone = () => {
     canvas.style.width = "100%";
     canvas.style.height = "100%";
     const { scene, camera } = createKitchenScene(clientWidth, clientHeight);
+    const controls = new OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.target.set(0, 0, 0);
     rendererRef.current = renderer;
     sceneRef.current = scene;
     cameraRef.current = camera;
     let animationFrameId;
-    const fps = 30;
-    const durationSec = 95;
-    const durationFrames = fps * durationSec;
-    let frame = 0;
     const renderLoop = () => {
       if (!rendererRef.current || !sceneRef.current || !cameraRef.current) return;
-      const renderer2 = rendererRef.current;
-      const scene2 = sceneRef.current;
-      const camera2 = cameraRef.current;
-      const t = durationFrames > 0 ? frame % durationFrames / durationFrames : 0;
-      const x = interpolate(t, [0, 0.4, 1], [3, 1.5, -1.8]);
-      const y = interpolate(t, [0, 0.2, 1], [1.5, 3.5, 3]);
-      const z = interpolate(t, [0, 0.3, 1], [5.5, 7, 9]);
-      const lookX = 0;
-      const lookY = interpolate(t, [0, 1], [-0.35, -0.05]);
-      const lookZ = 0;
-      const shake = Math.sin(frame * 0.05) * 5e-3;
-      camera2.position.set(x, y + shake, z);
-      camera2.lookAt(lookX, lookY, lookZ);
-      renderer2.render(scene2, camera2);
-      frame += 1;
+      controls.update();
+      rendererRef.current.render(sceneRef.current, cameraRef.current);
       animationFrameId = requestAnimationFrame(renderLoop);
     };
     renderLoop();
@@ -181,7 +169,7 @@ const KitchenSceneStandalone = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 224,
+      lineNumber: 206,
       columnNumber: 5
     }
   );
