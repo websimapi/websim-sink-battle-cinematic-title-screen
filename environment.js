@@ -64,7 +64,7 @@ export const createEnvironment = (scene, materials) => {
   scene.add(bottomFrame);
 
   const leftFrame = new THREE.Mesh(
-    new THREE.BoxGeometry(frameThickness, windowHeight, frameDepth),
+    new THREE.BoxGeometry(frameThickness, windowHeight + 0.1, frameDepth),
     frameMat,
   );
   leftFrame.position.set(-windowWidth / 2 - frameThickness / 2, 1.5, windowZ);
@@ -72,7 +72,7 @@ export const createEnvironment = (scene, materials) => {
   scene.add(leftFrame);
 
   const rightFrame = new THREE.Mesh(
-    new THREE.BoxGeometry(frameThickness, windowHeight, frameDepth),
+    new THREE.BoxGeometry(frameThickness, windowHeight + 0.1, frameDepth),
     frameMat,
   );
   rightFrame.position.set(windowWidth / 2 + frameThickness / 2, 1.5, windowZ);
@@ -109,13 +109,13 @@ export const createEnvironment = (scene, materials) => {
   const wallGroup = new THREE.Group();
   wallGroup.position.z = -2.0; 
   
-  // Dimensions based on window frame bounds
+  // Dimensions based on window frame bounds - adjusted to overlap frame slightly to prevent light leaks
   const roomWidth = 20;
   const roomHeight = 3.5; 
-  const winBoundLeft = -2.1;
-  const winBoundRight = 2.1;
-  const winBoundTop = 2.85;
-  const winBoundBottom = 0.15;
+  const winBoundLeft = -2.08;  // Was -2.1
+  const winBoundRight = 2.08;  // Was 2.1
+  const winBoundTop = 2.82;    // Was 2.85
+  const winBoundBottom = 0.18; // Was 0.15
 
   // Left Wall
   const leftW = (roomWidth / 2) + winBoundLeft; 
