@@ -205,13 +205,40 @@ export const createCounterAndSink = (scene, materials) => {
 
   // Carcass
   const carcassH = cabH - toeKickH;
-  const carcass = new THREE.Mesh(
-    new THREE.BoxGeometry(counterWidth, carcassH, cabD),
+  const carcassBottomY = -3.5 + toeKickH;
+  const centerW = 3.6;
+  
+  // Left Section
+  const sideW = (counterWidth - centerW) / 2;
+  const leftCarcass = new THREE.Mesh(
+    new THREE.BoxGeometry(sideW, carcassH, cabD),
     cabinetMat
   );
-  carcass.position.set(0, -3.5 + toeKickH + carcassH/2, cabZ);
-  carcass.receiveShadow = true;
-  cabinetGroup.add(carcass);
+  leftCarcass.position.set(-(counterWidth/2 - sideW/2), carcassBottomY + carcassH/2, cabZ);
+  leftCarcass.receiveShadow = true;
+  cabinetGroup.add(leftCarcass);
+
+  // Right Section
+  const rightCarcass = new THREE.Mesh(
+    new THREE.BoxGeometry(sideW, carcassH, cabD),
+    cabinetMat
+  );
+  rightCarcass.position.set((counterWidth/2 - sideW/2), carcassBottomY + carcassH/2, cabZ);
+  rightCarcass.receiveShadow = true;
+  cabinetGroup.add(rightCarcass);
+
+  // Center Section (Sink Base) - Lowered to avoid clipping into sink basin
+  // Sink depth extends to approx -0.8. We end the cabinet box at -0.85 to be safe.
+  const centerTopY = -0.85;
+  const centerH = centerTopY - carcassBottomY;
+  
+  const centerCarcass = new THREE.Mesh(
+    new THREE.BoxGeometry(centerW, centerH, cabD),
+    cabinetMat
+  );
+  centerCarcass.position.set(0, carcassBottomY + centerH/2, cabZ);
+  centerCarcass.receiveShadow = true;
+  cabinetGroup.add(centerCarcass);
   
   // Toe Kick
   const kick = new THREE.Mesh(
