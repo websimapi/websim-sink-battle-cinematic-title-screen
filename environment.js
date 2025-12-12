@@ -30,7 +30,7 @@ export const setupLighting = (scene) => {
 };
 
 export const createEnvironment = (scene, materials) => {
-  const { frameMat, glassMat, outdoorMat, wood } = materials;
+  const { frameMat, glassMat, outdoorMat, wood, wallMat, ceilingMat } = materials;
 
   const windowWidth = 4;
   const windowHeight = 2.5;
@@ -98,13 +98,86 @@ export const createEnvironment = (scene, materials) => {
   sill.receiveShadow = true;
   scene.add(sill);
 
-  // Shadow Plane
+  // Walls
+  const wallGroup = new THREE.Group();
+  wallGroup.position.z = -2.0; 
+  
+  // Dimensions based on window frame bounds: x[-2.1, 2.1], y[0.25, 2.75]
+  const roomWidth = 20;
+  const roomHeight = 3.5; // ~11.5ft
+  const winBoundLeft = -2.15;
+  const winBoundRight = 2.15;
+  const winBoundTop = 2.8;
+  const winBoundBottom = 0.2;
+
+  // Left Wall
+  const leftW = (roomWidth / 2) + winBoundLeft; 
+  const leftWall = new THREE.Mesh(
+    new THREE.BoxGeometry(leftW, roomHeight, 0.2),
+    wallMat
+  );
+  leftWall.position.set(-10 + leftW/2, roomHeight/2, 0);
+  leftWall.castShadow = true;
+  leftWall.receiveShadow = true;
+  wallGroup.add(leftWall);
+
+  // Right Wall
+  const rightW = (roomWidth / 2) - winBoundRight;
+  const rightWall = new THREE.Mesh(
+    new THREE.BoxGeometry(rightW, roomHeight, 0.2),
+    wallMat
+  );
+  rightWall.position.set(10 - rightW/2, roomHeight/2, 0);
+  rightWall.castShadow = true;
+  rightWall.receiveShadow = true;
+  wallGroup.add(rightWall);
+
+  // Top Wall (Header)
+  const midW = winBoundRight - winBoundLeft;
+  const topH = roomHeight - winBoundTop;
+  if (topH > 0) {
+    const topWall = new THREE.Mesh(
+      new THREE.BoxGeometry(midW, topH, 0.2),
+      wallMat
+    );
+    topWall.position.set(0, winBoundTop + topH/2, 0);
+    topWall.castShadow = true;
+    topWall.receiveShadow = true;
+    wallGroup.add(topWall);
+  }
+
+  // Bottom Wall (Apron)
+  const botH = winBoundBottom;
+  if (botH > 0) {
+    const botWall = new THREE.Mesh(
+      new THREE.BoxGeometry(midW, botH, 0.2),
+      wallMat
+    );
+    botWall.position.set(0, botH/2, 0);
+    botWall.castShadow = true;
+    botWall.receiveShadow = true;
+    wallGroup.add(botWall);
+  }
+
+  scene.add(wallGroup);
+
+  // Ceiling
+  const ceiling = new THREE.Mesh(
+    new THREE.PlaneGeometry(20, 20),
+    ceilingMat
+  );
+  ceiling.rotation.x = Math.PI / 2;
+  ceiling.position.y = roomHeight;
+  ceiling.receiveShadow = true;
+  scene.add(ceiling);
+
+  // Shadow Plane (Floor)
   const shadowPlane = new THREE.Mesh(
     new THREE.PlaneGeometry(20, 20),
     new THREE.ShadowMaterial({ color: 0x000000, opacity: 0.4 }),
   );
   shadowPlane.rotation.x = -Math.PI / 2;
-  shadowPlane.position.y = -1.1;
+  shadowPlane.position.y = -0.5; 
   shadowPlane.receiveShadow = true;
   scene.add(shadowPlane);
 };

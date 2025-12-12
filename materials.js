@@ -6,6 +6,13 @@ export const loadMaterials = () => {
   wood.wrapS = wood.wrapT = THREE.RepeatWrapping;
   
   const tiles = loader.load("kitchen_tiles.png");
+  tiles.wrapS = tiles.wrapT = THREE.RepeatWrapping;
+  tiles.repeat.set(6, 6); // Adjusted repeat for wall scale
+
+  const tilesNormal = loader.load("kitchen_tiles_normal.png");
+  tilesNormal.wrapS = tilesNormal.wrapT = THREE.RepeatWrapping;
+  tilesNormal.repeat.set(6, 6);
+
   const metal = loader.load("metal_scratch.png");
   const dirty = loader.load("dirty_plate_texture.png");
   const hdrEnv = loader.load("kitchen_hdr.png");
@@ -30,6 +37,20 @@ export const loadMaterials = () => {
     metalness: 0.9,
     roughness: 0.2,
     color: "#cccccc"
+  });
+
+  const wallMat = new THREE.MeshStandardMaterial({
+    map: tiles,
+    normalMap: tilesNormal,
+    roughness: 0.5,
+    color: "#eeeeee"
+  });
+
+  const ceilingMat = new THREE.MeshStandardMaterial({
+    color: "#dddddd",
+    roughness: 0.9,
+    metalness: 0.0,
+    side: THREE.DoubleSide
   });
 
   const chromeMat = new THREE.MeshStandardMaterial({
@@ -76,7 +97,7 @@ export const loadMaterials = () => {
 
   return {
     wood, tiles, metal, dirty, hdrEnv,
-    counterMat, metalMat, rimMat, chromeMat, rubberMat, frameMat, glassMat, outdoorMat, dirtyMat
+    counterMat, metalMat, rimMat, chromeMat, rubberMat, frameMat, glassMat, outdoorMat, dirtyMat, wallMat, ceilingMat
   };
 };
 

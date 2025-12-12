@@ -67,7 +67,7 @@ const KitchenSceneCanvas = () => {
     const t = durationInFrames > 0 ? frame / durationInFrames : 0;
     const x = interpolate(t, [0, 0.4, 1], [3, 1.5, -1.8]);
     const y = interpolate(t, [0, 0.2, 1], [1.5, 3.5, 3]);
-    const z = interpolate(t, [0, 0.3, 1], [4, 6, 7.5]);
+    const z = interpolate(t, [0, 0.3, 1], [5.5, 7, 9]);
     const lookX = 0;
     const lookY = interpolate(t, [0, 1], [-0.35, -0.05]);
     const lookZ = 0;
@@ -133,7 +133,7 @@ const KitchenSceneStandalone = () => {
       const t = durationFrames > 0 ? frame % durationFrames / durationFrames : 0;
       const x = interpolate(t, [0, 0.4, 1], [3, 1.5, -1.8]);
       const y = interpolate(t, [0, 0.2, 1], [1.5, 3.5, 3]);
-      const z = interpolate(t, [0, 0.3, 1], [4, 6, 7.5]);
+      const z = interpolate(t, [0, 0.3, 1], [5.5, 7, 9]);
       const lookX = 0;
       const lookY = interpolate(t, [0, 1], [-0.35, -0.05]);
       const lookZ = 0;
