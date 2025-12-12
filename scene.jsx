@@ -164,7 +164,7 @@ const createKitchenScene = (width, height) => {
   baseMesh.receiveShadow = true;
   faucetGroup.add(baseMesh);
   const handleGroup = new THREE.Group();
-  handleGroup.position.set(0.14, 0.15, 0);
+  handleGroup.position.set(0.14, 0.28, 0);
   handleGroup.rotation.z = -Math.PI / 4;
   const handlePin = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.15, 16), chromeMat);
   handlePin.rotation.z = Math.PI / 2;
@@ -193,7 +193,7 @@ const createKitchenScene = (width, height) => {
   faucetGroup.add(tubeMesh);
   const headGroup = new THREE.Group();
   headGroup.position.set(0, 1.3, 1.45);
-  headGroup.rotation.x = -Math.PI / 2.5;
+  headGroup.rotation.x = Math.PI / 3;
   const headGeo = new THREE.CylinderGeometry(0.075, 0.085, 0.4, 32);
   const headMesh = new THREE.Mesh(headGeo, chromeMat);
   headMesh.rotation.x = Math.PI / 2;
