@@ -33,8 +33,8 @@ const createKitchenScene = (width, height) => {
   });
   const holeWidth = 3.5;
   const holeDepth = 2.1;
-  const counterWidth = 10;
-  const counterDepth = 4;
+  const counterWidth = 18;
+  const counterDepth = 5;
   const counterThickness = 0.2;
   const counterGroup = new THREE.Group();
   counterGroup.position.y = -0.1;
@@ -134,30 +134,60 @@ const createKitchenScene = (width, height) => {
   sinkGroup.add(createBasin(sinkW / 4 + dividerW / 4));
   scene.add(sinkGroup);
   const faucetGroup = new THREE.Group();
-  faucetGroup.position.set(0, 0, -1.35);
-  const faucetBody = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.1, 0.15, 1, 16),
-    new THREE.MeshStandardMaterial({
-      color: "#dddddd",
-      metalness: 1,
-      roughness: 0.1
-    })
-  );
-  faucetBody.position.set(0, 0.5, 0);
-  faucetBody.castShadow = true;
-  faucetGroup.add(faucetBody);
-  const faucetNeck = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.08, 0.1, 0.8, 16),
-    new THREE.MeshStandardMaterial({
-      color: "#dddddd",
-      metalness: 1,
-      roughness: 0.1
-    })
-  );
-  faucetNeck.position.set(0, 1, 0.3);
-  faucetNeck.rotation.set(0.5, 0, 0);
-  faucetNeck.castShadow = true;
-  faucetGroup.add(faucetNeck);
+  faucetGroup.position.set(0, 0, -1.45);
+  const brushedMetal = new THREE.MeshStandardMaterial({
+    map: metal,
+    color: "#e0e0e0",
+    metalness: 0.9,
+    roughness: 0.3
+  });
+  const baseGeo = new THREE.CylinderGeometry(0.18, 0.22, 0.3, 32);
+  const baseMesh = new THREE.Mesh(baseGeo, brushedMetal);
+  baseMesh.position.y = 0.15;
+  baseMesh.castShadow = true;
+  faucetGroup.add(baseMesh);
+  const curve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(0, 0.2, 0),
+    // Start at base
+    new THREE.Vector3(0, 1.5, 0),
+    // Vertical rise
+    new THREE.Vector3(0, 2.5, 0.6),
+    // High arch peak
+    new THREE.Vector3(0, 2, 1.3),
+    // Curving down
+    new THREE.Vector3(0, 1.2, 1.45)
+    // End over sink
+  ]);
+  const tubeGeo = new THREE.TubeGeometry(curve, 64, 0.08, 16, false);
+  const neckMesh = new THREE.Mesh(tubeGeo, brushedMetal);
+  neckMesh.castShadow = true;
+  faucetGroup.add(neckMesh);
+  const headGroup = new THREE.Group();
+  headGroup.position.set(0, 1.2, 1.45);
+  headGroup.rotation.x = -Math.PI / 1.3;
+  const headGeo = new THREE.CylinderGeometry(0.12, 0.11, 0.45, 32);
+  const headMesh = new THREE.Mesh(headGeo, brushedMetal);
+  headMesh.rotation.x = Math.PI / 2;
+  headMesh.position.z = 0.22;
+  headMesh.castShadow = true;
+  headGroup.add(headMesh);
+  const btnMat = new THREE.MeshStandardMaterial({
+    color: "#222222",
+    roughness: 0.8,
+    metalness: 0.2
+  });
+  const btnGeo = new THREE.CapsuleGeometry(0.035, 0.1, 4, 8);
+  const btn1 = new THREE.Mesh(btnGeo, btnMat);
+  btn1.position.set(0, 0.11, 0.25);
+  btn1.rotation.z = Math.PI / 2;
+  btn1.scale.set(1, 0.8, 0.4);
+  headGroup.add(btn1);
+  const btn2 = new THREE.Mesh(btnGeo, btnMat);
+  btn2.position.set(0, -0.11, 0.25);
+  btn2.rotation.z = Math.PI / 2;
+  btn2.scale.set(1, 0.8, 0.4);
+  headGroup.add(btn2);
+  faucetGroup.add(headGroup);
   scene.add(faucetGroup);
   const frameMat = new THREE.MeshStandardMaterial({
     color: "#e0e0e0",
@@ -359,7 +389,7 @@ const KitchenSceneCanvas = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 462,
+      lineNumber: 509,
       columnNumber: 5
     }
   );
@@ -450,7 +480,7 @@ const KitchenSceneStandalone = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 568,
+      lineNumber: 615,
       columnNumber: 5
     }
   );
