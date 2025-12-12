@@ -164,8 +164,8 @@ const createKitchenScene = (width, height) => {
   baseMesh.receiveShadow = true;
   faucetGroup.add(baseMesh);
   const handleGroup = new THREE.Group();
-  handleGroup.position.set(0.14, 0.28, 0);
-  handleGroup.rotation.z = -Math.PI / 4;
+  handleGroup.position.set(0.14, 0.15, 0);
+  handleGroup.rotation.z = Math.PI / 4;
   const handlePin = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.15, 16), chromeMat);
   handlePin.rotation.z = Math.PI / 2;
   handlePin.position.x = 0.075;
@@ -180,20 +180,20 @@ const createKitchenScene = (width, height) => {
     // Start at top of base
     new THREE.Vector3(0, 1.3, 0),
     // Vertical rise
-    new THREE.Vector3(0, 2.1, 0.4),
-    // High arch peak start
-    new THREE.Vector3(0, 2, 1.1),
-    // High arch peak forward
-    new THREE.Vector3(0, 1.3, 1.45)
-    // Curve down towards sink
+    new THREE.Vector3(0, 2.2, 0.3),
+    // High arch peak start (tighter)
+    new THREE.Vector3(0, 2, 0.9),
+    // High arch peak forward (tighter)
+    new THREE.Vector3(0, 1.2, 1.2)
+    // Curve down towards sink (pulled inward)
   ]);
   const tubeGeo = new THREE.TubeGeometry(curve, 64, 0.06, 32, false);
   const tubeMesh = new THREE.Mesh(tubeGeo, chromeMat);
   tubeMesh.castShadow = true;
   faucetGroup.add(tubeMesh);
   const headGroup = new THREE.Group();
-  headGroup.position.set(0, 1.3, 1.45);
-  headGroup.rotation.x = Math.PI / 3;
+  headGroup.position.set(0, 1.2, 1.2);
+  headGroup.rotation.x = Math.PI / 2.2;
   const headGeo = new THREE.CylinderGeometry(0.075, 0.085, 0.4, 32);
   const headMesh = new THREE.Mesh(headGeo, chromeMat);
   headMesh.rotation.x = Math.PI / 2;
