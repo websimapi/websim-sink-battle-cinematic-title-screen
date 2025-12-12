@@ -364,9 +364,9 @@ const KitchenSceneCanvas = () => {
     const scene = sceneRef.current;
     const camera = cameraRef.current;
     const t = durationInFrames > 0 ? frame / durationInFrames : 0;
-    const x = interpolate(t, [0, 0.4, 1], [0.8, 0, -1.5]);
-    const y = interpolate(t, [0, 0.2, 1], [0.3, 2.5, 1.8]);
-    const z = interpolate(t, [0, 0.3, 1], [0.8, 3.5, 4]);
+    const x = interpolate(t, [0, 0.4, 1], [1.3, 0.4, -1.2]);
+    const y = interpolate(t, [0, 0.2, 1], [0.6, 2.8, 2.1]);
+    const z = interpolate(t, [0, 0.3, 1], [1.3, 4, 4.5]);
     const lookX = 0;
     const lookY = interpolate(t, [0, 1], [-0.5, -0.2]);
     const lookZ = 0;
@@ -430,9 +430,9 @@ const KitchenSceneStandalone = () => {
       const scene2 = sceneRef.current;
       const camera2 = cameraRef.current;
       const t = durationFrames > 0 ? frame % durationFrames / durationFrames : 0;
-      const x = interpolate(t, [0, 0.4, 1], [0.8, 0, -1.5]);
-      const y = interpolate(t, [0, 0.2, 1], [0.3, 2.5, 1.8]);
-      const z = interpolate(t, [0, 0.3, 1], [0.8, 3.5, 4]);
+      const x = interpolate(t, [0, 0.4, 1], [1.3, 0.4, -1.2]);
+      const y = interpolate(t, [0, 0.2, 1], [0.6, 2.8, 2.1]);
+      const z = interpolate(t, [0, 0.3, 1], [1.3, 4, 4.5]);
       const lookX = 0;
       const lookY = interpolate(t, [0, 1], [-0.5, -0.2]);
       const lookZ = 0;
