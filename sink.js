@@ -239,6 +239,17 @@ export const createCounterAndSink = (scene, materials) => {
   centerCarcass.position.set(0, carcassBottomY + centerH/2, cabZ);
   centerCarcass.receiveShadow = true;
   cabinetGroup.add(centerCarcass);
+
+  // Sink Apron (Filler behind false panel to close gap)
+  const apronH = 0.65; // Matches gap from carcass top (-0.85) to counter (-0.2)
+  const sinkApron = new THREE.Mesh(
+    new THREE.BoxGeometry(centerW, apronH, 0.1), 
+    cabinetMat
+  );
+  sinkApron.position.set(0, -0.2 - apronH/2, cabZ + cabD/2 - 0.05);
+  sinkApron.castShadow = true;
+  sinkApron.receiveShadow = true;
+  cabinetGroup.add(sinkApron);
   
   // Toe Kick
   const kick = new THREE.Mesh(
