@@ -43,72 +43,40 @@ const createKitchenScene = (width, height) => {
   });
   const basinGroup = new THREE.Group();
   basinGroup.position.set(0, -0.25, 0);
-  const bowlWidth = 1.1;
-  const bowlDepth = 0.9;
-  const bowlGap = 0.15;
-  const bowlHeight = 0.35;
-  const wallThickness = 0.06;
-  const makeBowl = (xOffset) => {
-    const group = new THREE.Group();
-    group.position.x = xOffset;
-    const bottom = new THREE.Mesh(
-      new THREE.BoxGeometry(bowlWidth - wallThickness * 2, 0.06, bowlDepth - wallThickness * 2),
-      metalMat
-    );
-    bottom.position.set(0, -bowlHeight, 0);
-    bottom.rotation.set(0.08, 0, 0);
-    bottom.castShadow = true;
-    bottom.receiveShadow = true;
-    group.add(bottom);
-    const longWallGeo = new THREE.BoxGeometry(
-      bowlWidth,
-      bowlHeight,
-      wallThickness
-    );
-    const frontWall = new THREE.Mesh(longWallGeo, metalMat);
-    frontWall.position.set(0, -bowlHeight / 2, bowlDepth / 2 - wallThickness / 2);
-    const backWall = new THREE.Mesh(longWallGeo, metalMat);
-    backWall.position.set(0, -bowlHeight / 2, -bowlDepth / 2 + wallThickness / 2);
-    group.add(frontWall, backWall);
-    const sideWallGeo = new THREE.BoxGeometry(
-      wallThickness,
-      bowlHeight,
-      bowlDepth
-    );
-    const leftWall = new THREE.Mesh(sideWallGeo, metalMat);
-    leftWall.position.set(-bowlWidth / 2 + wallThickness / 2, -bowlHeight / 2, 0);
-    const rightWall = new THREE.Mesh(sideWallGeo, metalMat);
-    rightWall.position.set(bowlWidth / 2 - wallThickness / 2, -bowlHeight / 2, 0);
-    group.add(leftWall, rightWall);
-    const lip = new THREE.Mesh(
-      new THREE.BoxGeometry(bowlWidth + wallThickness * 0.2, 0.03, bowlDepth + wallThickness * 0.2),
-      new THREE.MeshStandardMaterial({
-        map: metal,
-        metalness: 0.95,
-        roughness: 0.25
-      })
-    );
-    lip.position.set(0, 0.02, 0);
-    lip.castShadow = true;
-    lip.receiveShadow = true;
-    group.add(lip);
-    const drain = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.09, 0.09, 0.03, 24),
-      new THREE.MeshStandardMaterial({
-        color: "#bbbbbb",
-        metalness: 1,
-        roughness: 0.15
-      })
-    );
-    drain.position.set(0, -bowlHeight + 0.03, 0.1);
-    drain.castShadow = true;
-    group.add(drain);
-    return group;
-  };
-  const leftBowl = makeBowl(-bowlWidth / 2 - bowlGap / 2);
-  const rightBowl = makeBowl(bowlWidth / 2 + bowlGap / 2);
-  basinGroup.add(leftBowl);
-  basinGroup.add(rightBowl);
+  const bottom = new THREE.Mesh(
+    new THREE.BoxGeometry(2.6, 0.1, 1.6),
+    metalMat
+  );
+  bottom.position.set(0, -0.2, 0);
+  bottom.castShadow = true;
+  bottom.receiveShadow = true;
+  basinGroup.add(bottom);
+  const wallHeight = 0.4;
+  const wallThickness = 0.08;
+  const back = new THREE.Mesh(
+    new THREE.BoxGeometry(2.6, wallHeight, wallThickness),
+    metalMat
+  );
+  back.position.set(0, 0, -0.8);
+  basinGroup.add(back);
+  const front = new THREE.Mesh(
+    new THREE.BoxGeometry(2.6, wallHeight, wallThickness),
+    metalMat
+  );
+  front.position.set(0, 0, 0.8);
+  basinGroup.add(front);
+  const left = new THREE.Mesh(
+    new THREE.BoxGeometry(wallThickness, wallHeight, 1.6),
+    metalMat
+  );
+  left.position.set(-1.3, 0, 0);
+  basinGroup.add(left);
+  const right = new THREE.Mesh(
+    new THREE.BoxGeometry(wallThickness, wallHeight, 1.6),
+    metalMat
+  );
+  right.position.set(1.3, 0, 0);
+  basinGroup.add(right);
   const rim = new THREE.Mesh(
     new THREE.BoxGeometry(3.2, 0.05, 2.2),
     new THREE.MeshStandardMaterial({
@@ -343,7 +311,7 @@ const KitchenSceneCanvas = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 420,
+      lineNumber: 381,
       columnNumber: 5
     }
   );
@@ -432,7 +400,7 @@ const KitchenSceneStandalone = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 523,
+      lineNumber: 484,
       columnNumber: 5
     }
   );
