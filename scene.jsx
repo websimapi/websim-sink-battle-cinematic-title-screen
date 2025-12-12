@@ -254,6 +254,96 @@ const KitchenSceneCanvas = () => {
     }
   );
 };
+const KitchenSceneStandalone = () => {
+  const containerRef = useRef(null);
+  const rendererRef = useRef(null);
+  const sceneRef = useRef(null);
+  const cameraRef = useRef(null);
+  useEffect(() => {
+    if (!containerRef.current || rendererRef.current) return;
+    const { clientWidth, clientHeight } = containerRef.current;
+    const canvas = document.createElement("canvas");
+    containerRef.current.appendChild(canvas);
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true
+    });
+    renderer.setPixelRatio(window.devicePixelRatio || 1);
+    renderer.setSize(clientWidth, clientHeight, false);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    const { scene, camera } = createKitchenScene(clientWidth, clientHeight);
+    rendererRef.current = renderer;
+    sceneRef.current = scene;
+    cameraRef.current = camera;
+    let animationFrameId;
+    const fps = 30;
+    const durationSec = 95;
+    const durationFrames = fps * durationSec;
+    let frame = 0;
+    const renderLoop = () => {
+      if (!rendererRef.current || !sceneRef.current || !cameraRef.current) return;
+      const renderer2 = rendererRef.current;
+      const scene2 = sceneRef.current;
+      const camera2 = cameraRef.current;
+      const t = durationFrames > 0 ? frame % durationFrames / durationFrames : 0;
+      const x = interpolate(t, [0, 0.4, 1], [0.8, 0, -1.5]);
+      const y = interpolate(t, [0, 0.2, 1], [0.3, 2.5, 1.8]);
+      const z = interpolate(t, [0, 0.3, 1], [0.8, 3.5, 4]);
+      const lookX = 0;
+      const lookY = interpolate(t, [0, 1], [-0.5, -0.2]);
+      const lookZ = 0;
+      const shake = Math.sin(frame * 0.05) * 5e-3;
+      camera2.position.set(x, y + shake, z);
+      camera2.lookAt(lookX, lookY, lookZ);
+      renderer2.render(scene2, camera2);
+      frame += 1;
+      animationFrameId = requestAnimationFrame(renderLoop);
+    };
+    renderLoop();
+    const handleResize = () => {
+      if (!containerRef.current || !rendererRef.current || !cameraRef.current) return;
+      const { clientWidth: clientWidth2, clientHeight: clientHeight2 } = containerRef.current;
+      rendererRef.current.setSize(clientWidth2, clientHeight2, false);
+      cameraRef.current.aspect = clientWidth2 / clientHeight2;
+      cameraRef.current.updateProjectionMatrix();
+    };
+    window.addEventListener("resize", handleResize);
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("resize", handleResize);
+      if (rendererRef.current) {
+        rendererRef.current.dispose();
+      }
+      if (canvas.parentNode) {
+        canvas.parentNode.removeChild(canvas);
+      }
+      rendererRef.current = null;
+      sceneRef.current = null;
+      cameraRef.current = null;
+    };
+  }, []);
+  return /* @__PURE__ */ jsxDEV(
+    "div",
+    {
+      ref: containerRef,
+      style: {
+        width: "100%",
+        height: "100%",
+        overflow: "hidden"
+      }
+    },
+    void 0,
+    false,
+    {
+      fileName: "<stdin>",
+      lineNumber: 405,
+      columnNumber: 5
+    }
+  );
+};
 export {
-  KitchenSceneCanvas
+  KitchenSceneCanvas,
+  KitchenSceneStandalone
 };
