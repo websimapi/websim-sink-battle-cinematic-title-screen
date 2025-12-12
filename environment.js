@@ -43,7 +43,7 @@ export const createEnvironment = (scene, materials) => {
     new THREE.BoxGeometry(windowWidth + frameThickness * 2, frameThickness, frameDepth),
     frameMat,
   );
-  topFrame.position.set(0, 2.5, windowZ);
+  topFrame.position.set(0, 2.8, windowZ);
   topFrame.castShadow = true;
   scene.add(topFrame);
 
@@ -51,7 +51,7 @@ export const createEnvironment = (scene, materials) => {
     new THREE.BoxGeometry(windowWidth + frameThickness * 2, frameThickness, frameDepth),
     frameMat,
   );
-  bottomFrame.position.set(0, 0.5, windowZ);
+  bottomFrame.position.set(0, 0.2, windowZ);
   bottomFrame.castShadow = true;
   bottomFrame.receiveShadow = true;
   scene.add(bottomFrame);
@@ -102,13 +102,13 @@ export const createEnvironment = (scene, materials) => {
   const wallGroup = new THREE.Group();
   wallGroup.position.z = -2.0; 
   
-  // Dimensions based on window frame bounds: x[-2.1, 2.1], y[0.25, 2.75]
+  // Dimensions based on window frame bounds
   const roomWidth = 20;
-  const roomHeight = 3.5; // ~11.5ft
-  const winBoundLeft = -2.15;
-  const winBoundRight = 2.15;
-  const winBoundTop = 2.8;
-  const winBoundBottom = 0.2;
+  const roomHeight = 3.5; 
+  const winBoundLeft = -2.1;
+  const winBoundRight = 2.1;
+  const winBoundTop = 2.85;
+  const winBoundBottom = 0.15;
 
   // Left Wall
   const leftW = (roomWidth / 2) + winBoundLeft; 
