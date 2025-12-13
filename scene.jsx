@@ -93,7 +93,7 @@ const KitchenSceneCanvas = ({ totalFrames, startFrame }) => {
       shadowsCalculated.current = true;
     }
     renderer.render(scene, camera);
-  }, [frame, durationInFrames, ready]);
+  }, [frame, ready]);
   return /* @__PURE__ */ jsxDEV(
     "div",
     {
