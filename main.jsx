@@ -1,7 +1,7 @@
 import { jsxDEV } from "react/jsx-dev-runtime";
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { Player } from "@remotion/player";
+import { Player } from "@websim/remotion/player";
 import { SinkComposition } from "./composition.jsx";
 import { KitchenSceneStandalone } from "./scene.jsx";
 const FPS = 30;

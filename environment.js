@@ -50,7 +50,7 @@ export const createEnvironment = (scene, materials) => {
     new THREE.BoxGeometry(windowWidth + frameThickness * 2, frameThickness, frameDepth),
     frameMat,
   );
-  topFrame.position.set(0, 2.8, windowZ);
+  topFrame.position.set(0, 2.8, windowZ + 0.01);
   topFrame.castShadow = true;
   scene.add(topFrame);
 
@@ -58,7 +58,7 @@ export const createEnvironment = (scene, materials) => {
     new THREE.BoxGeometry(windowWidth + frameThickness * 2, frameThickness, frameDepth),
     frameMat,
   );
-  bottomFrame.position.set(0, 0.2, windowZ);
+  bottomFrame.position.set(0, 0.2, windowZ + 0.01);
   bottomFrame.castShadow = true;
   bottomFrame.receiveShadow = true;
   scene.add(bottomFrame);

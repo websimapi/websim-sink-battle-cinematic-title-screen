@@ -277,12 +277,12 @@ export const createCounterAndSink = (scene, materials) => {
   // Sink Base
   const cX = 0;
   const cW = 3.6;
-  const falsePanel = new THREE.Mesh(new THREE.BoxGeometry(cW - 0.1, topDrawerH, 0.06), cabinetMat);
+  const falsePanel = new THREE.Mesh(new THREE.BoxGeometry(cW - 0.04, topDrawerH, 0.06), cabinetMat);
   falsePanel.position.set(cX, -0.2 - topDrawerH/2 - 0.05, frontZ);
   falsePanel.castShadow = true;
   cabinetGroup.add(falsePanel);
   
-  const doorW = (cW - 0.2) / 2;
+  const doorW = (cW - 0.1) / 2;
   const leftDoor = createDoor(doorW, doorH, "right");
   leftDoor.position.set(cX - doorW/2 - 0.02, bottomY + doorH/2, frontZ);
   cabinetGroup.add(leftDoor);
@@ -296,18 +296,18 @@ export const createCounterAndSink = (scene, materials) => {
   const lX = -counterWidth/2 + lW/2;
   const dH = (carcassH - 0.2) / 3;
   for(let i=0; i<3; i++) {
-    const d = createDrawer(lW - 0.1, dH - 0.05);
+    const d = createDrawer(lW - 0.04, dH - 0.05);
     d.position.set(lX, bottomY + dH/2 + i*dH, frontZ);
     cabinetGroup.add(d);
   }
   
   // Right Bank
   const rX = counterWidth/2 - lW/2;
-  const rTopD = createDrawer(lW - 0.1, topDrawerH);
+  const rTopD = createDrawer(lW - 0.04, topDrawerH);
   rTopD.position.set(rX, -0.2 - topDrawerH/2 - 0.05, frontZ);
   cabinetGroup.add(rTopD);
   
-  const rDoor = createDoor(lW - 0.1, doorH, "left");
+  const rDoor = createDoor(lW - 0.04, doorH, "left");
   rDoor.position.set(rX, bottomY + doorH/2, frontZ);
   cabinetGroup.add(rDoor);
 };
