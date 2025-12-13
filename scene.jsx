@@ -26,6 +26,7 @@ const KitchenSceneCanvas = () => {
   const rendererRef = useRef(null);
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
+  const shadowsCalculated = useRef(false);
   const [ready, setReady] = useState(false);
   const [handle] = useState(() => delayRender("three-loading"));
   const frame = useCurrentFrame();
@@ -44,6 +45,7 @@ const KitchenSceneCanvas = () => {
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.autoUpdate = false;
     canvas.style.width = "100%";
     canvas.style.height = "100%";
     const onLoad = () => {
@@ -78,6 +80,10 @@ const KitchenSceneCanvas = () => {
     const shake = Math.sin(frame * 0.05) * 5e-3;
     camera.position.set(x, y + shake, z);
     camera.lookAt(lookX, lookY, lookZ);
+    if (!shadowsCalculated.current) {
+      renderer.shadowMap.needsUpdate = true;
+      shadowsCalculated.current = true;
+    }
     renderer.render(scene, camera);
   }, [frame, durationInFrames, ready]);
   return /* @__PURE__ */ jsxDEV(
@@ -94,7 +100,7 @@ const KitchenSceneCanvas = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 122,
+      lineNumber: 130,
       columnNumber: 5
     }
   );
@@ -185,7 +191,7 @@ const KitchenSceneStandalone = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 229,
+      lineNumber: 237,
       columnNumber: 5
     }
   );

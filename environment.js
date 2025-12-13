@@ -9,8 +9,8 @@ export const setupLighting = (scene) => {
   sunLight.position.set(2, 5, -8); 
   sunLight.target.position.set(0, 0, 0); 
   sunLight.castShadow = true;
-  sunLight.shadow.mapSize.width = 2048;
-  sunLight.shadow.mapSize.height = 2048;
+  sunLight.shadow.mapSize.width = 1024;
+  sunLight.shadow.mapSize.height = 1024;
   sunLight.shadow.bias = -0.0005;
   sunLight.shadow.camera.near = 0.5;
   sunLight.shadow.camera.far = 20;
@@ -32,6 +32,8 @@ export const setupLighting = (scene) => {
   const ceilingLight = new THREE.PointLight(0xffeedd, 1.5, 12);
   ceilingLight.position.set(0, 3.2, 3);
   ceilingLight.castShadow = true;
+  ceilingLight.shadow.mapSize.width = 512;
+  ceilingLight.shadow.mapSize.height = 512;
   ceilingLight.shadow.bias = -0.0001;
   scene.add(ceilingLight);
 };
