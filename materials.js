@@ -2,7 +2,11 @@ import * as THREE from "three";
 
 export const loadMaterials = (onLoad) => {
   const manager = new THREE.LoadingManager();
-  if (onLoad) manager.onLoad = onLoad;
+  if (onLoad) {
+    manager.onLoad = onLoad;
+    // Add error handler to prevent silent failures, though scene.jsx timeout catches the hang.
+    manager.onError = (url) => console.error("Error loading texture:", url);
+  }
 
   const loader = new THREE.TextureLoader(manager);
   const wood = loader.load("wood_counter.png");

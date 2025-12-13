@@ -21,7 +21,7 @@ const createKitchenScene = (width, height, onLoad) => {
   createDishes(scene, materials);
   return { scene, camera };
 };
-const KitchenSceneCanvas = () => {
+const KitchenSceneCanvas = ({ totalFrames, startFrame }) => {
   const containerRef = useRef(null);
   const rendererRef = useRef(null);
   const sceneRef = useRef(null);
@@ -30,9 +30,13 @@ const KitchenSceneCanvas = () => {
   const [ready, setReady] = useState(false);
   const [handle] = useState(() => delayRender("three-loading"));
   const frame = useCurrentFrame();
-  const { durationInFrames, width, height } = useVideoConfig();
+  const { width, height } = useVideoConfig();
   useEffect(() => {
     if (!containerRef.current || rendererRef.current) return;
+    const timeoutId = setTimeout(() => {
+      console.warn("Scene loading timed out (5s), forcing render continue.");
+      continueRender(handle);
+    }, 5e3);
     const canvas = document.createElement("canvas");
     containerRef.current.appendChild(canvas);
     const renderer = new THREE.WebGLRenderer({
@@ -49,6 +53,7 @@ const KitchenSceneCanvas = () => {
     canvas.style.width = "100%";
     canvas.style.height = "100%";
     const onLoad = () => {
+      clearTimeout(timeoutId);
       continueRender(handle);
     };
     const { scene, camera } = createKitchenScene(width, height, onLoad);
@@ -57,6 +62,7 @@ const KitchenSceneCanvas = () => {
     cameraRef.current = camera;
     setReady(true);
     return () => {
+      clearTimeout(timeoutId);
       renderer.dispose();
       if (canvas.parentNode) {
         canvas.parentNode.removeChild(canvas);
@@ -70,7 +76,9 @@ const KitchenSceneCanvas = () => {
     const renderer = rendererRef.current;
     const scene = sceneRef.current;
     const camera = cameraRef.current;
-    const t = durationInFrames > 0 ? frame / durationInFrames : 0;
+    const currentGlobalFrame = frame + (startFrame || 0);
+    const totalDuration = totalFrames || 2850;
+    const t = totalDuration > 0 ? currentGlobalFrame / totalDuration : 0;
     const x = interpolate(t, [0, 0.4, 1], [3, 1.5, -1.8]);
     const y = interpolate(t, [0, 0.2, 1], [1.5, 3.5, 3]);
     const z = interpolate(t, [0, 0.3, 1], [5.5, 7, 9]);
@@ -100,7 +108,7 @@ const KitchenSceneCanvas = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 130,
+      lineNumber: 141,
       columnNumber: 5
     }
   );
@@ -191,7 +199,7 @@ const KitchenSceneStandalone = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 237,
+      lineNumber: 248,
       columnNumber: 5
     }
   );
