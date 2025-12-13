@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
-export const loadMaterials = () => {
-  const loader = new THREE.TextureLoader();
+export const loadMaterials = (loadingManager) => {
+  const loader = new THREE.TextureLoader(loadingManager);
   const wood = loader.load("wood_counter.png");
   wood.wrapS = wood.wrapT = THREE.RepeatWrapping;
   

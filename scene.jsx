@@ -1,18 +1,18 @@
 import { jsxDEV } from "react/jsx-dev-runtime";
 import React, { useEffect, useRef, useState } from "react";
-import { useCurrentFrame, useVideoConfig, interpolate } from "remotion";
+import { useCurrentFrame, useVideoConfig, interpolate, delayRender, continueRender } from "remotion";
 import * as THREE from "three";
 import { loadMaterials } from "./materials.js";
 import { setupLighting, createEnvironment } from "./environment.js";
 import { createCounterAndSink } from "./sink.js";
 import { createFaucet } from "./faucet.js";
 import { createDishes } from "./dishes.js";
-const createKitchenScene = (width, height) => {
+const createKitchenScene = (width, height, loadingManager) => {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color("#050505");
   const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
   camera.position.set(1, 0.5, 1);
-  const materials = loadMaterials();
+  const materials = loadMaterials(loadingManager);
   scene.environment = materials.hdrEnv;
   setupLighting(scene);
   createEnvironment(scene, materials);
@@ -26,6 +26,7 @@ const KitchenSceneCanvas = () => {
   const rendererRef = useRef(null);
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
+  const [handle] = useState(() => delayRender("Loading 3D Assets"));
   const [ready, setReady] = useState(false);
   const frame = useCurrentFrame();
   const { durationInFrames, width, height } = useVideoConfig();
@@ -36,7 +37,8 @@ const KitchenSceneCanvas = () => {
     const renderer = new THREE.WebGLRenderer({
       canvas,
       antialias: true,
-      preserveDrawingBuffer: true
+      preserveDrawingBuffer: true,
+      powerPreference: "high-performance"
     });
     renderer.setPixelRatio(1);
     renderer.setSize(width, height, false);
@@ -45,12 +47,21 @@ const KitchenSceneCanvas = () => {
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     canvas.style.width = "100%";
     canvas.style.height = "100%";
-    const { scene, camera } = createKitchenScene(width, height);
+    const loadingManager = new THREE.LoadingManager();
+    loadingManager.onLoad = () => {
+      continueRender(handle);
+      setReady(true);
+    };
+    const { scene, camera } = createKitchenScene(width, height, loadingManager);
     rendererRef.current = renderer;
     sceneRef.current = scene;
     cameraRef.current = camera;
-    setReady(true);
+    const timeout = setTimeout(() => {
+      continueRender(handle);
+      setReady(true);
+    }, 1e4);
     return () => {
+      clearTimeout(timeout);
       renderer.dispose();
       if (canvas.parentNode) {
         canvas.parentNode.removeChild(canvas);
@@ -90,7 +101,7 @@ const KitchenSceneCanvas = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 117,
+      lineNumber: 131,
       columnNumber: 5
     }
   );
@@ -181,7 +192,7 @@ const KitchenSceneStandalone = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 224,
+      lineNumber: 238,
       columnNumber: 5
     }
   );

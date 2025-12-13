@@ -9,8 +9,8 @@ export const setupLighting = (scene) => {
   sunLight.position.set(2, 5, -8); 
   sunLight.target.position.set(0, 0, 0); 
   sunLight.castShadow = true;
-  sunLight.shadow.mapSize.width = 2048;
-  sunLight.shadow.mapSize.height = 2048;
+  sunLight.shadow.mapSize.width = 1024;
+  sunLight.shadow.mapSize.height = 1024;
   sunLight.shadow.bias = -0.0005;
   sunLight.shadow.camera.near = 0.5;
   sunLight.shadow.camera.far = 20;
@@ -28,12 +28,16 @@ export const setupLighting = (scene) => {
   scene.add(windowFill);
   scene.add(windowFill.target);
 
-  // Interior Ceiling Light - Warm top light
-  const ceilingLight = new THREE.PointLight(0xffeedd, 1.5, 12);
-  ceilingLight.position.set(0, 3.2, 3);
+  // Interior Ceiling Light - Warm top light (Optimized to SpotLight for better performance)
+  const ceilingLight = new THREE.SpotLight(0xffeedd, 1.5, 0, Math.PI / 1.5, 0.5, 1);
+  ceilingLight.position.set(0, 5, 2);
+  ceilingLight.target.position.set(0, 0, 2);
   ceilingLight.castShadow = true;
+  ceilingLight.shadow.mapSize.width = 1024;
+  ceilingLight.shadow.mapSize.height = 1024;
   ceilingLight.shadow.bias = -0.0001;
   scene.add(ceilingLight);
+  scene.add(ceilingLight.target);
 };
 
 export const createEnvironment = (scene, materials) => {
