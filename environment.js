@@ -32,10 +32,8 @@ export const setupLighting = (scene) => {
   const ceilingLight = new THREE.SpotLight(0xffeedd, 1.5, 0, Math.PI / 1.5, 0.5, 1);
   ceilingLight.position.set(0, 5, 2);
   ceilingLight.target.position.set(0, 0, 2);
-  ceilingLight.castShadow = true;
-  ceilingLight.shadow.mapSize.width = 512;
-  ceilingLight.shadow.mapSize.height = 512;
-  ceilingLight.shadow.bias = -0.0001;
+  // Shadow disabled for performance
+  ceilingLight.castShadow = false;
   scene.add(ceilingLight);
   scene.add(ceilingLight.target);
 };

@@ -1,26 +1,41 @@
 import { jsxDEV } from "react/jsx-dev-runtime";
-import React from "react";
-import { AbsoluteFill, Audio } from "remotion";
+import React, { useEffect, useState } from "react";
+import { AbsoluteFill, Audio, continueRender, delayRender } from "remotion";
 import { KitchenSceneCanvas } from "./scene.jsx";
 const SinkComposition = () => {
+  const [audioSrc, setAudioSrc] = useState(null);
+  const [handle] = useState(() => delayRender("Loading Audio"));
+  useEffect(() => {
+    fetch("sink_battle_music.mp3").then((res) => res.blob()).then((blob) => {
+      const url = URL.createObjectURL(blob);
+      setAudioSrc(url);
+      continueRender(handle);
+    }).catch((err) => {
+      console.error("Error loading audio:", err);
+      continueRender(handle);
+    });
+    return () => {
+      if (audioSrc) URL.revokeObjectURL(audioSrc);
+    };
+  }, []);
   return /* @__PURE__ */ jsxDEV(AbsoluteFill, { style: { backgroundColor: "#050505" }, children: [
     /* @__PURE__ */ jsxDEV(KitchenSceneCanvas, {}, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 9,
+      lineNumber: 30,
       columnNumber: 7
     }),
-    /* @__PURE__ */ jsxDEV(
+    audioSrc && /* @__PURE__ */ jsxDEV(
       Audio,
       {
-        src: "sink_battle_music.mp3",
+        src: audioSrc,
         volume: 0.8
       },
       void 0,
       false,
       {
         fileName: "<stdin>",
-        lineNumber: 11,
-        columnNumber: 7
+        lineNumber: 33,
+        columnNumber: 9
       }
     ),
     /* @__PURE__ */ jsxDEV(
@@ -35,13 +50,13 @@ const SinkComposition = () => {
       false,
       {
         fileName: "<stdin>",
-        lineNumber: 17,
+        lineNumber: 40,
         columnNumber: 7
       }
     )
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 8,
+    lineNumber: 29,
     columnNumber: 5
   });
 };

@@ -36,9 +36,10 @@ const KitchenSceneCanvas = () => {
     containerRef.current.appendChild(canvas);
     const renderer = new THREE.WebGLRenderer({
       canvas,
-      antialias: true,
+      antialias: false,
       preserveDrawingBuffer: true,
-      powerPreference: "high-performance"
+      powerPreference: "high-performance",
+      stencil: false
     });
     renderer.setPixelRatio(1);
     renderer.setSize(width, height, false);
@@ -101,7 +102,7 @@ const KitchenSceneCanvas = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 131,
+      lineNumber: 132,
       columnNumber: 5
     }
   );
@@ -192,7 +193,7 @@ const KitchenSceneStandalone = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 238,
+      lineNumber: 239,
       columnNumber: 5
     }
   );
