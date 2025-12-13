@@ -1,192 +1,147 @@
 import { jsxDEV } from "react/jsx-dev-runtime";
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
-import { Player } from "@websim/remotion/player";
+import { Player } from "@remotion/player";
 import { SinkComposition } from "./composition.jsx";
-import { KitchenSceneStandalone } from "./scene.jsx";
-const FPS = 30;
-const TOTAL_DURATION_SEC = 95;
-const TOTAL_FRAMES = FPS * TOTAL_DURATION_SEC;
-const CHUNK_SEC = 5;
-const CHUNK_FRAMES = FPS * CHUNK_SEC;
+import { styles } from "./styles.js";
+import { useRendering } from "./useRendering.js";
+import { DebugPanel } from "./DebugPanel.jsx";
+import { ChunkGrid } from "./ChunkGrid.jsx";
 const App = () => {
-  const [show3D, setShow3D] = React.useState(false);
-  const [hasInteracted, setHasInteracted] = React.useState(false);
-  const [chunkIndex, setChunkIndex] = React.useState(-1);
-  const isChunked = chunkIndex !== -1;
-  const startFrame = isChunked ? chunkIndex * CHUNK_FRAMES : 0;
-  const totalChunks = Math.ceil(TOTAL_FRAMES / CHUNK_FRAMES);
-  React.useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "`" || e.key === "~") {
-        setShow3D((prev) => !prev);
+  const [showDebug, setShowDebug] = useState(false);
+  const [config, setConfig] = useState({
+    duration: 95,
+    fps: 30,
+    strategy: "auto",
+    customFrames: 120,
+    customConcurrency: 25,
+    combineChunks: false
+  });
+  const playerRef = useRef(null);
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === "~" || e.key === "`") {
+        setShowDebug((prev) => !prev);
       }
     };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
   }, []);
-  if (!hasInteracted) {
-    return /* @__PURE__ */ jsxDEV(
-      "div",
-      {
-        onClick: () => setHasInteracted(true),
-        style: {
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "#050505",
-          cursor: "pointer",
-          flexDirection: "column",
-          gap: "20px",
-          color: "white",
-          fontFamily: "sans-serif"
-        },
-        children: [
-          /* @__PURE__ */ jsxDEV("h1", { style: { margin: 0, textTransform: "uppercase", letterSpacing: "2px" }, children: "Sink Battle" }, void 0, false, {
-            fileName: "<stdin>",
-            lineNumber: 51,
-            columnNumber: 9
-          }),
-          /* @__PURE__ */ jsxDEV("div", { style: {
-            padding: "12px 32px",
-            border: "1px solid rgba(255,255,255,0.3)",
-            borderRadius: "4px",
-            backgroundColor: "rgba(255,255,255,0.05)",
-            fontSize: "1.2rem"
-          }, children: "Click to Start" }, void 0, false, {
-            fileName: "<stdin>",
-            lineNumber: 52,
-            columnNumber: 9
-          })
-        ]
-      },
-      void 0,
-      true,
-      {
+  const {
+    stats,
+    renderStatus,
+    recording,
+    recordChunk,
+    renderAllChunks
+  } = useRendering(config, playerRef);
+  return /* @__PURE__ */ jsxDEV("div", { style: styles.container, children: [
+    showDebug && /* @__PURE__ */ jsxDEV("header", { style: styles.header, children: [
+      /* @__PURE__ */ jsxDEV("h1", { style: styles.h1, children: "\u{1F3AC} Remotion Smart Chunk Manager" }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 35,
-        columnNumber: 7
-      }
-    );
-  }
-  if (show3D) {
-    return /* @__PURE__ */ jsxDEV("div", { style: { width: "100%", height: "100%", backgroundColor: "#111" }, children: /* @__PURE__ */ jsxDEV(KitchenSceneStandalone, {}, void 0, false, {
+        lineNumber: 45,
+        columnNumber: 11
+      }),
+      /* @__PURE__ */ jsxDEV("p", { style: styles.subtitle, children: "Optimized rendering pipeline for WebSim & Lambda" }, void 0, false, {
+        fileName: "<stdin>",
+        lineNumber: 46,
+        columnNumber: 11
+      })
+    ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 68,
+      lineNumber: 44,
       columnNumber: 9
-    }) }, void 0, false, {
-      fileName: "<stdin>",
-      lineNumber: 67,
-      columnNumber: 7
-    });
-  }
-  return /* @__PURE__ */ jsxDEV("div", { style: { width: "100%", height: "100%", display: "flex", flexDirection: "column", backgroundColor: "#111" }, children: [
-    /* @__PURE__ */ jsxDEV("div", { style: {
-      padding: "12px",
-      background: "#1a1a1a",
-      borderBottom: "1px solid #333",
-      display: "flex",
-      gap: "8px",
-      overflowX: "auto",
-      whiteSpace: "nowrap",
-      scrollbarWidth: "thin"
-    }, children: [
-      /* @__PURE__ */ jsxDEV(
-        "button",
+    }),
+    /* @__PURE__ */ jsxDEV("div", { style: styles.grid, children: [
+      showDebug && /* @__PURE__ */ jsxDEV(
+        DebugPanel,
         {
-          onClick: () => setChunkIndex(-1),
-          style: {
-            background: chunkIndex === -1 ? "#3b82f6" : "#333",
-            color: "white",
-            border: "1px solid rgba(255,255,255,0.1)",
-            padding: "6px 12px",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontSize: "0.9rem",
-            fontWeight: chunkIndex === -1 ? "bold" : "normal"
-          },
-          children: "Full Video"
+          config,
+          setConfig,
+          stats,
+          recording,
+          renderAllChunks
         },
         void 0,
         false,
         {
           fileName: "<stdin>",
-          lineNumber: 86,
-          columnNumber: 9
-        }
-      ),
-      Array.from({ length: totalChunks }).map((_, i) => /* @__PURE__ */ jsxDEV(
-        "button",
-        {
-          onClick: () => setChunkIndex(i),
-          style: {
-            background: chunkIndex === i ? "#3b82f6" : "#333",
-            color: "white",
-            border: "1px solid rgba(255,255,255,0.1)",
-            padding: "6px 12px",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontSize: "0.9rem"
-          },
-          children: [
-            "Chunk ",
-            i + 1
-          ]
-        },
-        i,
-        true,
-        {
-          fileName: "<stdin>",
-          lineNumber: 102,
+          lineNumber: 53,
           columnNumber: 11
         }
-      ))
+      ),
+      /* @__PURE__ */ jsxDEV("div", { style: styles.playerWrapper, children: stats.totalFrames > 0 ? /* @__PURE__ */ jsxDEV(
+        Player,
+        {
+          ref: playerRef,
+          component: SinkComposition,
+          durationInFrames: stats.totalFrames,
+          fps: config.fps,
+          compositionWidth: 1080,
+          compositionHeight: 1920,
+          controls: true,
+          loop: true,
+          muted: recording,
+          style: {
+            width: "100%",
+            maxWidth: "360px",
+            aspectRatio: "9/16",
+            boxShadow: "0 0 20px rgba(0,0,0,0.5)"
+          }
+        },
+        void 0,
+        false,
+        {
+          fileName: "<stdin>",
+          lineNumber: 65,
+          columnNumber: 13
+        }
+      ) : /* @__PURE__ */ jsxDEV("div", { style: {
+        width: "100%",
+        maxWidth: "360px",
+        aspectRatio: "9/16",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "rgba(0,0,0,0.5)",
+        borderRadius: "10px",
+        color: "white"
+      }, children: "Invalid Duration" }, void 0, false, {
+        fileName: "<stdin>",
+        lineNumber: 83,
+        columnNumber: 14
+      }) }, void 0, false, {
+        fileName: "<stdin>",
+        lineNumber: 63,
+        columnNumber: 9
+      }),
+      showDebug && /* @__PURE__ */ jsxDEV(
+        ChunkGrid,
+        {
+          stats,
+          renderStatus,
+          recordChunk
+        },
+        void 0,
+        false,
+        {
+          fileName: "<stdin>",
+          lineNumber: 95,
+          columnNumber: 11
+        }
+      )
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 76,
-      columnNumber: 7
-    }),
-    /* @__PURE__ */ jsxDEV("div", { style: { flex: 1, display: "flex", justifyContent: "center", alignItems: "center", overflow: "hidden", background: "#050505" }, children: /* @__PURE__ */ jsxDEV(
-      Player,
-      {
-        component: SinkComposition,
-        durationInFrames: TOTAL_FRAMES,
-        fps: FPS,
-        compositionWidth: 1080,
-        compositionHeight: 1920,
-        controls: true,
-        autoPlay: true,
-        loop: true,
-        initialFrame: startFrame,
-        style: {
-          width: "100%",
-          maxWidth: "540px",
-          aspectRatio: "9/16",
-          boxShadow: "0 0 30px rgba(0,0,0,0.6)"
-        }
-      },
-      startFrame,
-      false,
-      {
-        fileName: "<stdin>",
-        lineNumber: 121,
-        columnNumber: 9
-      }
-    ) }, void 0, false, {
-      fileName: "<stdin>",
-      lineNumber: 120,
+      lineNumber: 50,
       columnNumber: 7
     })
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 74,
+    lineNumber: 42,
     columnNumber: 5
   });
 };
 createRoot(document.getElementById("app")).render(/* @__PURE__ */ jsxDEV(App, {}, void 0, false, {
   fileName: "<stdin>",
-  lineNumber: 144,
+  lineNumber: 106,
   columnNumber: 51
 }));

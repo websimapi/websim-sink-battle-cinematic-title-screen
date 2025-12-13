@@ -3,7 +3,7 @@ import * as THREE from "three";
 export const createDishes = (scene, materials) => {
   const { dirtyMat, dirty } = materials;
 
-  const plateGeo = new THREE.CylinderGeometry(0.4, 0.3, 0.05, 24);
+  const plateGeo = new THREE.CylinderGeometry(0.4, 0.3, 0.05, 32);
   const cupGeo = new THREE.CylinderGeometry(0.15, 0.12, 0.4, 16);
 
   const dishesGroup = new THREE.Group();

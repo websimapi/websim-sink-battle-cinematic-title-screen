@@ -9,9 +9,10 @@ export const setupLighting = (scene) => {
   sunLight.position.set(2, 5, -8); 
   sunLight.target.position.set(0, 0, 0); 
   sunLight.castShadow = true;
-  sunLight.shadow.mapSize.width = 1024;
-  sunLight.shadow.mapSize.height = 1024;
-  sunLight.shadow.bias = -0.0005;
+  sunLight.shadow.mapSize.width = 2048;
+  sunLight.shadow.mapSize.height = 2048;
+  sunLight.shadow.bias = -0.0001;
+  sunLight.shadow.normalBias = 0.02; // Helps with self-shadowing acne/peter-panning
   sunLight.shadow.camera.near = 0.5;
   sunLight.shadow.camera.far = 20;
   sunLight.shadow.camera.left = -5;
@@ -32,9 +33,8 @@ export const setupLighting = (scene) => {
   const ceilingLight = new THREE.PointLight(0xffeedd, 1.5, 12);
   ceilingLight.position.set(0, 3.2, 3);
   ceilingLight.castShadow = true;
-  ceilingLight.shadow.mapSize.width = 512;
-  ceilingLight.shadow.mapSize.height = 512;
   ceilingLight.shadow.bias = -0.0001;
+  ceilingLight.shadow.normalBias = 0.01;
   scene.add(ceilingLight);
 };
 
@@ -52,7 +52,7 @@ export const createEnvironment = (scene, materials) => {
     new THREE.BoxGeometry(windowWidth + frameThickness * 2, frameThickness, frameDepth),
     frameMat,
   );
-  topFrame.position.set(0, 2.8, windowZ + 0.01);
+  topFrame.position.set(0, 2.8, windowZ);
   topFrame.castShadow = true;
   scene.add(topFrame);
 
@@ -60,7 +60,7 @@ export const createEnvironment = (scene, materials) => {
     new THREE.BoxGeometry(windowWidth + frameThickness * 2, frameThickness, frameDepth),
     frameMat,
   );
-  bottomFrame.position.set(0, 0.2, windowZ + 0.01);
+  bottomFrame.position.set(0, 0.2, windowZ);
   bottomFrame.castShadow = true;
   bottomFrame.receiveShadow = true;
   scene.add(bottomFrame);

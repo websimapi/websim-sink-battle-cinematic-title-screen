@@ -7,7 +7,7 @@ export const createFaucet = (scene, materials) => {
   faucetGroup.position.set(0, 0, -1.4); 
 
   // Base
-  const baseGeo = new THREE.CylinderGeometry(0.14, 0.16, 0.25, 24);
+  const baseGeo = new THREE.CylinderGeometry(0.14, 0.16, 0.25, 32);
   const baseMesh = new THREE.Mesh(baseGeo, chromeMat);
   baseMesh.position.y = 0.125;
   baseMesh.castShadow = true;
@@ -19,12 +19,12 @@ export const createFaucet = (scene, materials) => {
   handleGroup.position.set(0.14, 0.15, 0); 
   handleGroup.rotation.z = Math.PI / 4; 
   
-  const handlePin = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.15, 8), chromeMat);
+  const handlePin = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.15, 16), chromeMat);
   handlePin.rotation.z = Math.PI / 2;
   handlePin.position.x = 0.075;
   handleGroup.add(handlePin);
   
-  const handleStick = new THREE.Mesh(new THREE.CapsuleGeometry(0.035, 0.25, 4, 8), chromeMat);
+  const handleStick = new THREE.Mesh(new THREE.CapsuleGeometry(0.035, 0.25, 4, 16), chromeMat);
   handleStick.rotation.z = Math.PI / 2;
   handleStick.position.x = 0.25;
   handleGroup.add(handleStick);
@@ -39,7 +39,7 @@ export const createFaucet = (scene, materials) => {
     new THREE.Vector3(0, 1.2, 1.2)       
   ]);
 
-  const tubeGeo = new THREE.TubeGeometry(curve, 32, 0.06, 16, false);
+  const tubeGeo = new THREE.TubeGeometry(curve, 64, 0.06, 32, false);
   const tubeMesh = new THREE.Mesh(tubeGeo, chromeMat);
   tubeMesh.castShadow = true;
   faucetGroup.add(tubeMesh);
@@ -49,14 +49,14 @@ export const createFaucet = (scene, materials) => {
   headGroup.position.set(0, 1.2, 1.2);
   headGroup.rotation.x = Math.PI / 2.2; 
 
-  const headGeo = new THREE.CylinderGeometry(0.075, 0.085, 0.4, 24);
+  const headGeo = new THREE.CylinderGeometry(0.075, 0.085, 0.4, 32);
   const headMesh = new THREE.Mesh(headGeo, chromeMat);
   headMesh.rotation.x = Math.PI / 2; 
   headMesh.position.z = 0.2; 
   headMesh.castShadow = true;
   headGroup.add(headMesh);
   
-  const tipGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.02, 24);
+  const tipGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.02, 32);
   const tipMesh = new THREE.Mesh(tipGeo, new THREE.MeshStandardMaterial({color: "#111", roughness: 0.5}));
   tipMesh.rotation.x = Math.PI / 2;
   tipMesh.position.z = 0.41;

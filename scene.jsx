@@ -1,18 +1,18 @@
 import { jsxDEV } from "react/jsx-dev-runtime";
 import React, { useEffect, useRef, useState } from "react";
-import { useCurrentFrame, useVideoConfig, interpolate, delayRender, continueRender } from "remotion";
+import { useCurrentFrame, useVideoConfig, interpolate } from "remotion";
 import * as THREE from "three";
 import { loadMaterials } from "./materials.js";
 import { setupLighting, createEnvironment } from "./environment.js";
 import { createCounterAndSink } from "./sink.js";
 import { createFaucet } from "./faucet.js";
 import { createDishes } from "./dishes.js";
-const createKitchenScene = (width, height, onLoad) => {
+const createKitchenScene = (width, height) => {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color("#050505");
   const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
   camera.position.set(1, 0.5, 1);
-  const materials = loadMaterials(onLoad);
+  const materials = loadMaterials();
   scene.environment = materials.hdrEnv;
   setupLighting(scene);
   createEnvironment(scene, materials);
@@ -26,17 +26,11 @@ const KitchenSceneCanvas = () => {
   const rendererRef = useRef(null);
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
-  const shadowsCalculated = useRef(false);
   const [ready, setReady] = useState(false);
-  const [handle] = useState(() => delayRender("three-loading"));
   const frame = useCurrentFrame();
-  const { width, height, durationInFrames } = useVideoConfig();
+  const { durationInFrames, width, height } = useVideoConfig();
   useEffect(() => {
     if (!containerRef.current || rendererRef.current) return;
-    const timeoutId = setTimeout(() => {
-      console.warn("Scene loading timed out (5s), forcing render continue.");
-      continueRender(handle);
-    }, 5e3);
     const canvas = document.createElement("canvas");
     containerRef.current.appendChild(canvas);
     const renderer = new THREE.WebGLRenderer({
@@ -49,26 +43,20 @@ const KitchenSceneCanvas = () => {
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.shadowMap.autoUpdate = false;
     canvas.style.width = "100%";
     canvas.style.height = "100%";
-    const onLoad = () => {
-      clearTimeout(timeoutId);
-      continueRender(handle);
-    };
-    const { scene, camera } = createKitchenScene(width, height, onLoad);
+    const { scene, camera } = createKitchenScene(width, height);
     rendererRef.current = renderer;
     sceneRef.current = scene;
     cameraRef.current = camera;
     setReady(true);
     return () => {
-      clearTimeout(timeoutId);
       renderer.dispose();
       if (canvas.parentNode) {
         canvas.parentNode.removeChild(canvas);
       }
     };
-  }, [width, height, handle]);
+  }, [width, height]);
   useEffect(() => {
     if (!ready || !rendererRef.current || !sceneRef.current || !cameraRef.current) {
       return;
@@ -76,8 +64,7 @@ const KitchenSceneCanvas = () => {
     const renderer = rendererRef.current;
     const scene = sceneRef.current;
     const camera = cameraRef.current;
-    const totalDuration = durationInFrames || 2850;
-    const t = totalDuration > 0 ? frame / totalDuration : 0;
+    const t = durationInFrames > 0 ? frame / durationInFrames : 0;
     const x = interpolate(t, [0, 0.4, 1], [3, 1.5, -1.8]);
     const y = interpolate(t, [0, 0.2, 1], [1.5, 3.5, 3]);
     const z = interpolate(t, [0, 0.3, 1], [5.5, 7, 9]);
@@ -87,12 +74,8 @@ const KitchenSceneCanvas = () => {
     const shake = Math.sin(frame * 0.05) * 5e-3;
     camera.position.set(x, y + shake, z);
     camera.lookAt(lookX, lookY, lookZ);
-    if (!shadowsCalculated.current) {
-      renderer.shadowMap.needsUpdate = true;
-      shadowsCalculated.current = true;
-    }
     renderer.render(scene, camera);
-  }, [frame, ready, durationInFrames]);
+  }, [frame, durationInFrames, ready]);
   return /* @__PURE__ */ jsxDEV(
     "div",
     {
@@ -107,7 +90,7 @@ const KitchenSceneCanvas = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 139,
+      lineNumber: 117,
       columnNumber: 5
     }
   );
@@ -198,7 +181,7 @@ const KitchenSceneStandalone = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 246,
+      lineNumber: 224,
       columnNumber: 5
     }
   );
