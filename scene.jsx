@@ -21,7 +21,7 @@ const createKitchenScene = (width, height, onLoad) => {
   createDishes(scene, materials);
   return { scene, camera };
 };
-const KitchenSceneCanvas = ({ totalFrames, startFrame }) => {
+const KitchenSceneCanvas = () => {
   const containerRef = useRef(null);
   const rendererRef = useRef(null);
   const sceneRef = useRef(null);
@@ -30,7 +30,7 @@ const KitchenSceneCanvas = ({ totalFrames, startFrame }) => {
   const [ready, setReady] = useState(false);
   const [handle] = useState(() => delayRender("three-loading"));
   const frame = useCurrentFrame();
-  const { width, height } = useVideoConfig();
+  const { width, height, durationInFrames } = useVideoConfig();
   useEffect(() => {
     if (!containerRef.current || rendererRef.current) return;
     const timeoutId = setTimeout(() => {
@@ -68,7 +68,7 @@ const KitchenSceneCanvas = ({ totalFrames, startFrame }) => {
         canvas.parentNode.removeChild(canvas);
       }
     };
-  }, [width, height]);
+  }, [width, height, handle]);
   useEffect(() => {
     if (!ready || !rendererRef.current || !sceneRef.current || !cameraRef.current) {
       return;
@@ -76,9 +76,8 @@ const KitchenSceneCanvas = ({ totalFrames, startFrame }) => {
     const renderer = rendererRef.current;
     const scene = sceneRef.current;
     const camera = cameraRef.current;
-    const currentGlobalFrame = frame + (startFrame || 0);
-    const totalDuration = totalFrames || 2850;
-    const t = totalDuration > 0 ? currentGlobalFrame / totalDuration : 0;
+    const totalDuration = durationInFrames || 2850;
+    const t = totalDuration > 0 ? frame / totalDuration : 0;
     const x = interpolate(t, [0, 0.4, 1], [3, 1.5, -1.8]);
     const y = interpolate(t, [0, 0.2, 1], [1.5, 3.5, 3]);
     const z = interpolate(t, [0, 0.3, 1], [5.5, 7, 9]);
@@ -93,7 +92,7 @@ const KitchenSceneCanvas = ({ totalFrames, startFrame }) => {
       shadowsCalculated.current = true;
     }
     renderer.render(scene, camera);
-  }, [frame, ready]);
+  }, [frame, ready, durationInFrames]);
   return /* @__PURE__ */ jsxDEV(
     "div",
     {
@@ -108,7 +107,7 @@ const KitchenSceneCanvas = ({ totalFrames, startFrame }) => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 141,
+      lineNumber: 139,
       columnNumber: 5
     }
   );
@@ -199,7 +198,7 @@ const KitchenSceneStandalone = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 248,
+      lineNumber: 246,
       columnNumber: 5
     }
   );

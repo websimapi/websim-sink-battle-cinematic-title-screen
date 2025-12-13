@@ -2,27 +2,24 @@ import { jsxDEV } from "react/jsx-dev-runtime";
 import React from "react";
 import { AbsoluteFill, Audio } from "remotion";
 import { KitchenSceneCanvas } from "./scene.jsx";
-const SinkComposition = ({ totalFrames, startFrame }) => {
-  const safeTotal = totalFrames || 2850;
-  const safeStart = startFrame || 0;
+const SinkComposition = () => {
   return /* @__PURE__ */ jsxDEV(AbsoluteFill, { style: { backgroundColor: "#050505" }, children: [
-    /* @__PURE__ */ jsxDEV(KitchenSceneCanvas, { totalFrames: safeTotal, startFrame: safeStart }, void 0, false, {
+    /* @__PURE__ */ jsxDEV(KitchenSceneCanvas, {}, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 13,
+      lineNumber: 9,
       columnNumber: 7
     }),
     /* @__PURE__ */ jsxDEV(
       Audio,
       {
         src: "/api - Sink Battle - Sonauto.ogg",
-        volume: 0.8,
-        startFrom: safeStart
+        volume: 0.8
       },
       void 0,
       false,
       {
         fileName: "<stdin>",
-        lineNumber: 15,
+        lineNumber: 11,
         columnNumber: 7
       }
     ),
@@ -38,13 +35,13 @@ const SinkComposition = ({ totalFrames, startFrame }) => {
       false,
       {
         fileName: "<stdin>",
-        lineNumber: 22,
+        lineNumber: 17,
         columnNumber: 7
       }
     )
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 12,
+    lineNumber: 8,
     columnNumber: 5
   });
 };

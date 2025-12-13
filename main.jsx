@@ -14,7 +14,6 @@ const App = () => {
   const [hasInteracted, setHasInteracted] = React.useState(false);
   const [chunkIndex, setChunkIndex] = React.useState(-1);
   const isChunked = chunkIndex !== -1;
-  const currentDuration = isChunked ? Math.min(CHUNK_FRAMES, TOTAL_FRAMES - chunkIndex * CHUNK_FRAMES) : TOTAL_FRAMES;
   const startFrame = isChunked ? chunkIndex * CHUNK_FRAMES : 0;
   const totalChunks = Math.ceil(TOTAL_FRAMES / CHUNK_FRAMES);
   React.useEffect(() => {
@@ -47,7 +46,7 @@ const App = () => {
         children: [
           /* @__PURE__ */ jsxDEV("h1", { style: { margin: 0, textTransform: "uppercase", letterSpacing: "2px" }, children: "Sink Battle" }, void 0, false, {
             fileName: "<stdin>",
-            lineNumber: 56,
+            lineNumber: 51,
             columnNumber: 9
           }),
           /* @__PURE__ */ jsxDEV("div", { style: {
@@ -58,7 +57,7 @@ const App = () => {
             fontSize: "1.2rem"
           }, children: "Click to Start" }, void 0, false, {
             fileName: "<stdin>",
-            lineNumber: 57,
+            lineNumber: 52,
             columnNumber: 9
           })
         ]
@@ -67,7 +66,7 @@ const App = () => {
       true,
       {
         fileName: "<stdin>",
-        lineNumber: 40,
+        lineNumber: 35,
         columnNumber: 7
       }
     );
@@ -75,11 +74,11 @@ const App = () => {
   if (show3D) {
     return /* @__PURE__ */ jsxDEV("div", { style: { width: "100%", height: "100%", backgroundColor: "#111" }, children: /* @__PURE__ */ jsxDEV(KitchenSceneStandalone, {}, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 73,
+      lineNumber: 68,
       columnNumber: 9
     }) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 72,
+      lineNumber: 67,
       columnNumber: 7
     });
   }
@@ -114,7 +113,7 @@ const App = () => {
         false,
         {
           fileName: "<stdin>",
-          lineNumber: 91,
+          lineNumber: 86,
           columnNumber: 9
         }
       ),
@@ -140,30 +139,27 @@ const App = () => {
         true,
         {
           fileName: "<stdin>",
-          lineNumber: 107,
+          lineNumber: 102,
           columnNumber: 11
         }
       ))
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 81,
+      lineNumber: 76,
       columnNumber: 7
     }),
     /* @__PURE__ */ jsxDEV("div", { style: { flex: 1, display: "flex", justifyContent: "center", alignItems: "center", overflow: "hidden", background: "#050505" }, children: /* @__PURE__ */ jsxDEV(
       Player,
       {
         component: SinkComposition,
-        durationInFrames: currentDuration,
+        durationInFrames: TOTAL_FRAMES,
         fps: FPS,
         compositionWidth: 1080,
         compositionHeight: 1920,
         controls: true,
         autoPlay: true,
         loop: true,
-        inputProps: {
-          totalFrames: TOTAL_FRAMES,
-          startFrame
-        },
+        initialFrame: startFrame,
         style: {
           width: "100%",
           maxWidth: "540px",
@@ -175,22 +171,22 @@ const App = () => {
       false,
       {
         fileName: "<stdin>",
-        lineNumber: 126,
+        lineNumber: 121,
         columnNumber: 9
       }
     ) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 125,
+      lineNumber: 120,
       columnNumber: 7
     })
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 79,
+    lineNumber: 74,
     columnNumber: 5
   });
 };
 createRoot(document.getElementById("app")).render(/* @__PURE__ */ jsxDEV(App, {}, void 0, false, {
   fileName: "<stdin>",
-  lineNumber: 152,
+  lineNumber: 144,
   columnNumber: 51
 }));
