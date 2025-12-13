@@ -19,7 +19,23 @@ const createKitchenScene = (width, height, loadingManager) => {
   createCounterAndSink(scene, materials);
   createFaucet(scene, materials);
   createDishes(scene, materials);
-  return { scene, camera };
+  return { scene, camera, materials };
+};
+const cleanMaterial = (material) => {
+  material.dispose();
+  if (material.map) material.map.dispose();
+  if (material.lightMap) material.lightMap.dispose();
+  if (material.bumpMap) material.bumpMap.dispose();
+  if (material.normalMap) material.normalMap.dispose();
+  if (material.specularMap) material.specularMap.dispose();
+  if (material.envMap) material.envMap.dispose();
+  if (material.alphaMap) material.alphaMap.dispose();
+  if (material.aoMap) material.aoMap.dispose();
+  if (material.displacementMap) material.displacementMap.dispose();
+  if (material.emissiveMap) material.emissiveMap.dispose();
+  if (material.gradientMap) material.gradientMap.dispose();
+  if (material.metalnessMap) material.metalnessMap.dispose();
+  if (material.roughnessMap) material.roughnessMap.dispose();
 };
 const KitchenSceneCanvas = () => {
   const containerRef = useRef(null);
@@ -49,24 +65,57 @@ const KitchenSceneCanvas = () => {
     canvas.style.width = "100%";
     canvas.style.height = "100%";
     const loadingManager = new THREE.LoadingManager();
+    const { scene, camera, materials } = createKitchenScene(width, height, loadingManager);
+    let isLoaded = false;
     loadingManager.onLoad = () => {
-      continueRender(handle);
-      setReady(true);
+      if (!isLoaded) {
+        isLoaded = true;
+        continueRender(handle);
+        setReady(true);
+      }
     };
-    const { scene, camera } = createKitchenScene(width, height, loadingManager);
     rendererRef.current = renderer;
     sceneRef.current = scene;
     cameraRef.current = camera;
     const timeout = setTimeout(() => {
-      continueRender(handle);
-      setReady(true);
-    }, 1e4);
+      if (!isLoaded) {
+        isLoaded = true;
+        continueRender(handle);
+        setReady(true);
+      }
+    }, 15e3);
     return () => {
       clearTimeout(timeout);
+      if (scene) {
+        scene.traverse((object) => {
+          if (!object.isMesh) return;
+          if (object.geometry) {
+            object.geometry.dispose();
+          }
+          if (object.material) {
+            if (Array.isArray(object.material)) {
+              object.material.forEach((material) => cleanMaterial(material));
+            } else {
+              cleanMaterial(object.material);
+            }
+          }
+        });
+        if (materials) {
+          Object.values(materials).forEach((mat) => {
+            if (mat && mat.isTexture) mat.dispose();
+            if (mat && mat.isMaterial) cleanMaterial(mat);
+          });
+        }
+        if (scene.environment) scene.environment.dispose();
+      }
       renderer.dispose();
+      renderer.forceContextLoss();
       if (canvas.parentNode) {
         canvas.parentNode.removeChild(canvas);
       }
+      rendererRef.current = null;
+      sceneRef.current = null;
+      cameraRef.current = null;
     };
   }, [width, height]);
   useEffect(() => {
@@ -102,7 +151,7 @@ const KitchenSceneCanvas = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 132,
+      lineNumber: 190,
       columnNumber: 5
     }
   );
@@ -193,7 +242,7 @@ const KitchenSceneStandalone = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 239,
+      lineNumber: 297,
       columnNumber: 5
     }
   );
