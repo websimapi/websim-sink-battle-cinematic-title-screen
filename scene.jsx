@@ -7,44 +7,27 @@ import { setupLighting, createEnvironment } from "./environment.js";
 import { createCounterAndSink } from "./sink.js";
 import { createFaucet } from "./faucet.js";
 import { createDishes } from "./dishes.js";
-THREE.Cache.enabled = true;
-const createKitchenScene = (width, height, loadingManager) => {
+const createKitchenScene = (width, height, onLoad) => {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color("#050505");
   const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
   camera.position.set(1, 0.5, 1);
-  const materials = loadMaterials(loadingManager);
+  const materials = loadMaterials(onLoad);
   scene.environment = materials.hdrEnv;
   setupLighting(scene);
   createEnvironment(scene, materials);
   createCounterAndSink(scene, materials);
   createFaucet(scene, materials);
   createDishes(scene, materials);
-  return { scene, camera, materials };
-};
-const cleanMaterial = (material) => {
-  material.dispose();
-  if (material.map) material.map.dispose();
-  if (material.lightMap) material.lightMap.dispose();
-  if (material.bumpMap) material.bumpMap.dispose();
-  if (material.normalMap) material.normalMap.dispose();
-  if (material.specularMap) material.specularMap.dispose();
-  if (material.envMap) material.envMap.dispose();
-  if (material.alphaMap) material.alphaMap.dispose();
-  if (material.aoMap) material.aoMap.dispose();
-  if (material.displacementMap) material.displacementMap.dispose();
-  if (material.emissiveMap) material.emissiveMap.dispose();
-  if (material.gradientMap) material.gradientMap.dispose();
-  if (material.metalnessMap) material.metalnessMap.dispose();
-  if (material.roughnessMap) material.roughnessMap.dispose();
+  return { scene, camera };
 };
 const KitchenSceneCanvas = () => {
   const containerRef = useRef(null);
   const rendererRef = useRef(null);
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
-  const [handle] = useState(() => delayRender("Loading 3D Assets"));
   const [ready, setReady] = useState(false);
+  const [handle] = useState(() => delayRender("three-loading"));
   const frame = useCurrentFrame();
   const { durationInFrames, width, height } = useVideoConfig();
   useEffect(() => {
@@ -53,70 +36,29 @@ const KitchenSceneCanvas = () => {
     containerRef.current.appendChild(canvas);
     const renderer = new THREE.WebGLRenderer({
       canvas,
-      antialias: false,
-      preserveDrawingBuffer: true,
-      powerPreference: "high-performance",
-      stencil: false
+      antialias: true,
+      preserveDrawingBuffer: true
     });
     renderer.setPixelRatio(1);
     renderer.setSize(width, height, false);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFShadowMap;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     canvas.style.width = "100%";
     canvas.style.height = "100%";
-    const loadingManager = new THREE.LoadingManager();
-    const { scene, camera, materials } = createKitchenScene(width, height, loadingManager);
-    let isLoaded = false;
-    loadingManager.onLoad = () => {
-      if (!isLoaded) {
-        isLoaded = true;
-        continueRender(handle);
-        setReady(true);
-      }
+    const onLoad = () => {
+      continueRender(handle);
     };
+    const { scene, camera } = createKitchenScene(width, height, onLoad);
     rendererRef.current = renderer;
     sceneRef.current = scene;
     cameraRef.current = camera;
-    const timeout = setTimeout(() => {
-      if (!isLoaded) {
-        isLoaded = true;
-        continueRender(handle);
-        setReady(true);
-      }
-    }, 15e3);
+    setReady(true);
     return () => {
-      clearTimeout(timeout);
-      if (scene) {
-        scene.traverse((object) => {
-          if (!object.isMesh) return;
-          if (object.geometry) {
-            object.geometry.dispose();
-          }
-          if (object.material) {
-            if (Array.isArray(object.material)) {
-              object.material.forEach((material) => cleanMaterial(material));
-            } else {
-              cleanMaterial(object.material);
-            }
-          }
-        });
-        if (materials) {
-          Object.values(materials).forEach((mat) => {
-            if (mat && mat.isTexture) mat.dispose();
-            if (mat && mat.isMaterial) cleanMaterial(mat);
-          });
-        }
-        if (scene.environment) scene.environment.dispose();
-      }
       renderer.dispose();
-      renderer.forceContextLoss();
       if (canvas.parentNode) {
         canvas.parentNode.removeChild(canvas);
       }
-      rendererRef.current = null;
-      sceneRef.current = null;
-      cameraRef.current = null;
     };
   }, [width, height]);
   useEffect(() => {
@@ -152,7 +94,7 @@ const KitchenSceneCanvas = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 193,
+      lineNumber: 122,
       columnNumber: 5
     }
   );
@@ -175,7 +117,7 @@ const KitchenSceneStandalone = () => {
     renderer.setSize(clientWidth, clientHeight, false);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFShadowMap;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     canvas.style.width = "100%";
     canvas.style.height = "100%";
     const { scene, camera } = createKitchenScene(clientWidth, clientHeight);
@@ -243,7 +185,7 @@ const KitchenSceneStandalone = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 300,
+      lineNumber: 229,
       columnNumber: 5
     }
   );
