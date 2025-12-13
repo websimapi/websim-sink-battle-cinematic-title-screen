@@ -14,6 +14,11 @@ export const createFaucet = (scene, materials) => {
   baseMesh.receiveShadow = true;
   faucetGroup.add(baseMesh);
 
+  // Swivel Group for rotating parts (Gooseneck, Handle, Head)
+  const swivelGroup = new THREE.Group();
+  swivelGroup.rotation.y = Math.PI / 5; // Rotate towards right sink
+  faucetGroup.add(swivelGroup);
+
   // Handle
   const handleGroup = new THREE.Group();
   handleGroup.position.set(0.14, 0.15, 0); 
@@ -28,7 +33,7 @@ export const createFaucet = (scene, materials) => {
   handleStick.rotation.z = Math.PI / 2;
   handleStick.position.x = 0.25;
   handleGroup.add(handleStick);
-  faucetGroup.add(handleGroup);
+  swivelGroup.add(handleGroup);
 
   // Gooseneck
   const curve = new THREE.CatmullRomCurve3([
@@ -42,12 +47,12 @@ export const createFaucet = (scene, materials) => {
   const tubeGeo = new THREE.TubeGeometry(curve, 64, 0.06, 32, false);
   const tubeMesh = new THREE.Mesh(tubeGeo, chromeMat);
   tubeMesh.castShadow = true;
-  faucetGroup.add(tubeMesh);
+  swivelGroup.add(tubeMesh);
 
   // Pull-down Head
   const headGroup = new THREE.Group();
   headGroup.position.set(0, 1.2, 1.2);
-  headGroup.rotation.x = Math.PI / 2.2; 
+  headGroup.rotation.x = Math.PI / 2.1; // Steeper angle for downward spray
 
   const headGeo = new THREE.CylinderGeometry(0.075, 0.085, 0.4, 32);
   const headMesh = new THREE.Mesh(headGeo, chromeMat);
@@ -76,8 +81,11 @@ export const createFaucet = (scene, materials) => {
   btn2.scale.set(1, 1, 0.5);
   headGroup.add(btn2);
 
-  faucetGroup.add(headGroup);
+  swivelGroup.add(headGroup);
   
   scene.add(faucetGroup);
+
+  // Return the tip mesh to track position for water particles
+  return { tipMesh: headGroup.children.find(c => c.geometry && c.geometry.type === 'CylinderGeometry' && c.material.color.getHex() === 0x111111) || headGroup };
 };
 

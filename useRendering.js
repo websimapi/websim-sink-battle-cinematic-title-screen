@@ -18,29 +18,45 @@ export const useRendering = (config, playerRef) => {
   // Audio Context Refs for recording
   const audioCtxRef = useRef(null);
   const audioDestRef = useRef(null);
-  const audioElRef = useRef(null);
+  const musicRef = useRef(null);
+  const waterRef = useRef(null);
 
   // Initialize Audio Context for recording capture
   useEffect(() => {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const ctx = new AudioContext();
     const dest = ctx.createMediaStreamDestination();
-    const audio = new Audio("/api - Sink Battle - Sonauto.ogg");
-    audio.crossOrigin = "anonymous";
-    audio.volume = 0.8; // Match composition volume
 
-    // Connect audio element to destination (for recording)
-    const source = ctx.createMediaElementSource(audio);
-    source.connect(dest);
+    // Music
+    const music = new Audio("/api - Sink Battle - Sonauto.ogg");
+    music.crossOrigin = "anonymous";
+    music.preload = "auto";
+    music.volume = 0.8; 
+    music.load();
+    const musicSource = ctx.createMediaElementSource(music);
+    musicSource.connect(dest);
+
+    // Water SFX
+    const water = new Audio("/asset_running_water.mp3");
+    water.crossOrigin = "anonymous";
+    water.preload = "auto";
+    water.volume = 0.8; // Increased volume for better audibility in download
+    water.loop = true;
+    water.load();
+    const waterSource = ctx.createMediaElementSource(water);
+    waterSource.connect(dest);
 
     audioCtxRef.current = ctx;
     audioDestRef.current = dest;
-    audioElRef.current = audio;
+    musicRef.current = music;
+    waterRef.current = water;
 
     return () => {
       if (ctx.state !== 'closed') ctx.close();
-      audio.pause();
-      audio.src = "";
+      music.pause();
+      music.src = "";
+      water.pause();
+      water.src = "";
     };
   }, []);
 
@@ -125,8 +141,10 @@ export const useRendering = (config, playerRef) => {
       }
 
       playerRef.current.seekTo(startFrame);
-      if (audioElRef.current) {
-        audioElRef.current.currentTime = startFrame / fps;
+      if (musicRef.current) musicRef.current.currentTime = startFrame / fps;
+      if (waterRef.current) {
+        const d = waterRef.current.duration || 28;
+        waterRef.current.currentTime = (startFrame / fps) % d;
       }
 
       // Give Three.js a moment to render the first frame
@@ -134,12 +152,14 @@ export const useRendering = (config, playerRef) => {
 
       mediaRecorder.start();
       playerRef.current.play();
-      if (audioElRef.current) audioElRef.current.play();
+      if (musicRef.current) musicRef.current.play().catch(e => console.warn("Music play failed", e));
+      if (waterRef.current) waterRef.current.play().catch(e => console.warn("Water play failed", e));
 
       // Stop after duration
       setTimeout(() => {
         playerRef.current.pause();
-        if (audioElRef.current) audioElRef.current.pause();
+        if (musicRef.current) musicRef.current.pause();
+        if (waterRef.current) waterRef.current.pause();
         mediaRecorder.stop();
       }, durationMs + 100); // Small buffer
     }
@@ -210,11 +230,14 @@ export const useRendering = (config, playerRef) => {
 
         if (playerRef.current) {
             playerRef.current.pause();
-            if (audioElRef.current) audioElRef.current.pause();
+            if (musicRef.current) musicRef.current.pause();
+            if (waterRef.current) waterRef.current.pause();
 
             playerRef.current.seekTo(startFrame);
-            if (audioElRef.current) {
-              audioElRef.current.currentTime = startFrame / fps;
+            if (musicRef.current) musicRef.current.currentTime = startFrame / fps;
+            if (waterRef.current) {
+                const d = waterRef.current.duration || 28;
+                waterRef.current.currentTime = (startFrame / fps) % d;
             }
 
             // Wait for render/buffer (allow Three.js to render frame)
@@ -222,13 +245,15 @@ export const useRendering = (config, playerRef) => {
 
             mediaRecorder.resume();
             playerRef.current.play();
-            if (audioElRef.current) audioElRef.current.play();
+            if (musicRef.current) musicRef.current.play().catch(e => console.warn("Music play failed", e));
+            if (waterRef.current) waterRef.current.play().catch(e => console.warn("Water play failed", e));
 
             // Record for duration
             await new Promise(r => setTimeout(r, durationMs));
 
             playerRef.current.pause();
-            if (audioElRef.current) audioElRef.current.pause();
+            if (musicRef.current) musicRef.current.pause();
+            if (waterRef.current) waterRef.current.pause();
             mediaRecorder.pause();
 
             // Small stability buffer before next chunk

@@ -24,6 +24,21 @@ const SinkComposition = () => {
       }
     ),
     /* @__PURE__ */ jsxDEV(
+      Audio,
+      {
+        src: "/asset_running_water.mp3",
+        volume: 0.8,
+        loop: true
+      },
+      void 0,
+      false,
+      {
+        fileName: "<stdin>",
+        lineNumber: 16,
+        columnNumber: 7
+      }
+    ),
+    /* @__PURE__ */ jsxDEV(
       AbsoluteFill,
       {
         style: {
@@ -35,7 +50,7 @@ const SinkComposition = () => {
       false,
       {
         fileName: "<stdin>",
-        lineNumber: 17,
+        lineNumber: 23,
         columnNumber: 7
       }
     )

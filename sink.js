@@ -148,7 +148,7 @@ export const createCounterAndSink = (scene, materials) => {
   scene.add(cabinetGroup);
   
   // Shaker Door Helper
-  const createDoor = (w, h, handleSide = "left") => {
+  const createDoor = (w, h, side = "left") => {
     const door = new THREE.Group();
     const thick = 0.08;
     const border = 0.12;
@@ -183,12 +183,15 @@ export const createCounterAndSink = (scene, materials) => {
     rightStile.castShadow = true;
     door.add(rightStile);
     
-    // Handle
+    // Handle - place on inner edge depending on cabinet side
     const handle = new THREE.Mesh(
         new THREE.CylinderGeometry(0.012, 0.012, 0.2, 8),
         new THREE.MeshStandardMaterial({color: "#333", metalness: 0.8, roughness: 0.2})
     );
-    const hX = handleSide === "left" ? w/2 - border/2 - 0.02 : -w/2 + border/2 + 0.02;
+    // For a left-side door, handle goes on its right edge (inner); for a right-side door, on its left edge (inner).
+    const hX = side === "left"
+      ? w/2 - border/2 - 0.02   // right edge of door
+      : -w/2 + border/2 + 0.02; // left edge of door
     handle.position.set(hX, h/4, thick + 0.05);
     handle.castShadow = true;
     door.add(handle);
@@ -284,11 +287,11 @@ export const createCounterAndSink = (scene, materials) => {
   cabinetGroup.add(falsePanel);
   
   const doorW = (cW - 0.2) / 2;
-  const leftDoor = createDoor(doorW, doorH, "right");
+  const leftDoor = createDoor(doorW, doorH, "left");
   leftDoor.position.set(cX - doorW/2 - 0.02, bottomY + doorH/2, frontZ);
   cabinetGroup.add(leftDoor);
   
-  const rightDoor = createDoor(doorW, doorH, "left");
+  const rightDoor = createDoor(doorW, doorH, "right");
   rightDoor.position.set(cX + doorW/2 + 0.02, bottomY + doorH/2, frontZ);
   cabinetGroup.add(rightDoor);
   
@@ -308,7 +311,7 @@ export const createCounterAndSink = (scene, materials) => {
   rTopD.position.set(rX, -0.2 - topDrawerH/2 - 0.05, frontZ);
   cabinetGroup.add(rTopD);
   
-  const rDoor = createDoor(lW - 0.1, doorH, "left");
+  const rDoor = createDoor(lW - 0.1, doorH, "right");
   rDoor.position.set(rX, bottomY + doorH/2, frontZ);
   cabinetGroup.add(rDoor);
 };

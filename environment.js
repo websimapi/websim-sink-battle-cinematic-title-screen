@@ -11,8 +11,8 @@ export const setupLighting = (scene) => {
   sunLight.castShadow = true;
   sunLight.shadow.mapSize.width = 2048;
   sunLight.shadow.mapSize.height = 2048;
-  sunLight.shadow.bias = -0.0001;
-  sunLight.shadow.normalBias = 0.02; // Helps with self-shadowing acne/peter-panning
+  sunLight.shadow.bias = -0.0005;
+  sunLight.shadow.normalBias = 0.03; // Helps with self-shadowing acne/peter-panning
   sunLight.shadow.camera.near = 0.5;
   sunLight.shadow.camera.far = 20;
   sunLight.shadow.camera.left = -5;
@@ -33,8 +33,8 @@ export const setupLighting = (scene) => {
   const ceilingLight = new THREE.PointLight(0xffeedd, 1.5, 12);
   ceilingLight.position.set(0, 3.2, 3);
   ceilingLight.castShadow = true;
-  ceilingLight.shadow.bias = -0.0001;
-  ceilingLight.shadow.normalBias = 0.01;
+  ceilingLight.shadow.bias = -0.0005;
+  ceilingLight.shadow.normalBias = 0.02;
   scene.add(ceilingLight);
 };
 

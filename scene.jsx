@@ -7,6 +7,7 @@ import { setupLighting, createEnvironment } from "./environment.js";
 import { createCounterAndSink } from "./sink.js";
 import { createFaucet } from "./faucet.js";
 import { createDishes } from "./dishes.js";
+import { createWaterSystem } from "./water.js";
 const createKitchenScene = (width, height) => {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color("#050505");
@@ -17,9 +18,10 @@ const createKitchenScene = (width, height) => {
   setupLighting(scene);
   createEnvironment(scene, materials);
   createCounterAndSink(scene, materials);
-  createFaucet(scene, materials);
+  const { tipMesh } = createFaucet(scene, materials);
   createDishes(scene, materials);
-  return { scene, camera };
+  const waterSystem = createWaterSystem(scene);
+  return { scene, camera, waterSystem, faucetTip: tipMesh };
 };
 const KitchenSceneCanvas = () => {
   const containerRef = useRef(null);
@@ -28,7 +30,7 @@ const KitchenSceneCanvas = () => {
   const cameraRef = useRef(null);
   const [ready, setReady] = useState(false);
   const frame = useCurrentFrame();
-  const { durationInFrames, width, height } = useVideoConfig();
+  const { durationInFrames, width, height, fps } = useVideoConfig();
   useEffect(() => {
     if (!containerRef.current || rendererRef.current) return;
     const canvas = document.createElement("canvas");
@@ -45,10 +47,11 @@ const KitchenSceneCanvas = () => {
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     canvas.style.width = "100%";
     canvas.style.height = "100%";
-    const { scene, camera } = createKitchenScene(width, height);
+    const { scene, camera, waterSystem, faucetTip } = createKitchenScene(width, height);
     rendererRef.current = renderer;
     sceneRef.current = scene;
     cameraRef.current = camera;
+    scene.userData = { waterSystem, faucetTip };
     setReady(true);
     return () => {
       renderer.dispose();
@@ -74,6 +77,9 @@ const KitchenSceneCanvas = () => {
     const shake = Math.sin(frame * 0.05) * 5e-3;
     camera.position.set(x, y + shake, z);
     camera.lookAt(lookX, lookY, lookZ);
+    if (scene.userData.waterSystem && scene.userData.faucetTip) {
+      scene.userData.waterSystem.update(frame, fps, scene.userData.faucetTip);
+    }
     renderer.render(scene, camera);
   }, [frame, durationInFrames, ready]);
   return /* @__PURE__ */ jsxDEV(
@@ -90,7 +96,7 @@ const KitchenSceneCanvas = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 117,
+      lineNumber: 130,
       columnNumber: 5
     }
   );
@@ -116,10 +122,11 @@ const KitchenSceneStandalone = () => {
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     canvas.style.width = "100%";
     canvas.style.height = "100%";
-    const { scene, camera } = createKitchenScene(clientWidth, clientHeight);
+    const { scene, camera, waterSystem, faucetTip } = createKitchenScene(clientWidth, clientHeight);
     rendererRef.current = renderer;
     sceneRef.current = scene;
     cameraRef.current = camera;
+    scene.userData = { waterSystem, faucetTip };
     let animationFrameId;
     const fps = 30;
     const durationSec = 95;
@@ -140,6 +147,9 @@ const KitchenSceneStandalone = () => {
       const shake = Math.sin(frame * 0.05) * 5e-3;
       camera2.position.set(x, y + shake, z);
       camera2.lookAt(lookX, lookY, lookZ);
+      if (scene2.userData.waterSystem && scene2.userData.faucetTip) {
+        scene2.userData.waterSystem.update(frame, fps, scene2.userData.faucetTip);
+      }
       renderer2.render(scene2, camera2);
       frame += 1;
       animationFrameId = requestAnimationFrame(renderLoop);
@@ -181,7 +191,7 @@ const KitchenSceneStandalone = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 224,
+      lineNumber: 242,
       columnNumber: 5
     }
   );
