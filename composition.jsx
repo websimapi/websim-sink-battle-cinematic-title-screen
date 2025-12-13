@@ -12,7 +12,7 @@ const SinkComposition = () => {
     /* @__PURE__ */ jsxDEV(
       Audio,
       {
-        src: "/api - Sink Battle - Sonauto.ogg",
+        src: "sink_battle_music.mp3",
         volume: 0.8
       },
       void 0,

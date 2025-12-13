@@ -44,7 +44,7 @@ const KitchenSceneCanvas = () => {
     renderer.setSize(width, height, false);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     canvas.style.width = "100%";
     canvas.style.height = "100%";
     const loadingManager = new THREE.LoadingManager();
@@ -124,7 +124,7 @@ const KitchenSceneStandalone = () => {
     renderer.setSize(clientWidth, clientHeight, false);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     canvas.style.width = "100%";
     canvas.style.height = "100%";
     const { scene, camera } = createKitchenScene(clientWidth, clientHeight);
