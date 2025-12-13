@@ -4,7 +4,7 @@ import { createRoot } from "react-dom/client";
 import { Player } from "@websim/remotion/player";
 import { SinkComposition } from "./composition.jsx";
 const FPS = 30;
-const DURATION_SEC = 95;
+const DURATION_SEC = 30;
 const DURATION_FRAMES = FPS * DURATION_SEC;
 createRoot(document.getElementById("app")).render(
   /* @__PURE__ */ jsxDEV("div", { style: { width: "100%", height: "100%", backgroundColor: "#000" }, children: /* @__PURE__ */ jsxDEV(

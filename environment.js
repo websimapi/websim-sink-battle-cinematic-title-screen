@@ -9,8 +9,9 @@ export const setupLighting = (scene) => {
   sunLight.position.set(2, 5, -8); 
   sunLight.target.position.set(0, 0, 0); 
   sunLight.castShadow = true;
-  sunLight.shadow.mapSize.width = 512;
-  sunLight.shadow.mapSize.height = 512;
+  // Reduced shadow map size for better performance during rendering
+  sunLight.shadow.mapSize.width = 256;
+  sunLight.shadow.mapSize.height = 256;
   sunLight.shadow.bias = -0.0005;
   sunLight.shadow.camera.near = 0.5;
   sunLight.shadow.camera.far = 20;

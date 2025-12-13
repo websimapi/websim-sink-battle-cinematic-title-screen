@@ -7,6 +7,7 @@ import { setupLighting, createEnvironment } from "./environment.js";
 import { createCounterAndSink } from "./sink.js";
 import { createFaucet } from "./faucet.js";
 import { createDishes } from "./dishes.js";
+THREE.Cache.enabled = true;
 const createKitchenScene = (width, height, loadingManager) => {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color("#050505");
@@ -151,7 +152,7 @@ const KitchenSceneCanvas = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 190,
+      lineNumber: 193,
       columnNumber: 5
     }
   );
@@ -242,7 +243,7 @@ const KitchenSceneStandalone = () => {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 297,
+      lineNumber: 300,
       columnNumber: 5
     }
   );
